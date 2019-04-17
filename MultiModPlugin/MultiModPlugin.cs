@@ -1,6 +1,5 @@
 ﻿using System.Linq;
 using BepInEx;
-using RoR2;
 using UnityEngine;
 using ModTool;
 using ModTool.Shared;
