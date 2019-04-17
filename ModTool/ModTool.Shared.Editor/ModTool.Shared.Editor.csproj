@@ -71,10 +71,13 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>copy /Y "$(TargetDir)$(TargetName).dll" "$(SolutionDir)ModTool\Example\Assets\ModTool\Editor\$(TargetName).dll"
-copy /Y "$(TargetDir)$(TargetName).xml" "$(SolutionDir)ModTool\Example\Assets\ModTool\Editor\$(TargetName).xml"
+    <PostBuildEvent>xcopy /Y "$(TargetDir)$(TargetName).dll" "$(SolutionDir)ModTool\Example\Assets\ModTool\Editor\*"
+xcopy /Y "$(TargetDir)$(TargetName).xml" "$(SolutionDir)ModTool\Example\Assets\ModTool\Editor\*"
 
-copy /Y "$(TargetDir)$(TargetName).dll" "$(SolutionDir)ModTool\Example Mod\Assets\ModTool\Editor\$(TargetName).dll"</PostBuildEvent>
+xcopy /Y "$(TargetDir)$(TargetName).dll" "$(SolutionDir)ModTool\Example Mod\Assets\ModTool\Editor\*"
+
+xcopy /Y "$(TargetDir)Mono.Cecil.dll" "$(SolutionDir)ModTool\Example\Assets\ModTool\Mono.Cecil\*"
+xcopy /Y "$(TargetDir)Mono.Cecil.dll" "$(SolutionDir)ModTool\Example Mod\Assets\ModTool\Mono.Cecil\*"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
