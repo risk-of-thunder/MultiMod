@@ -8,9 +8,11 @@ public class ExampleMod : ModBehaviour
     public ContentHandler Content { get; set; }
     void Start()
     {
-        Debug.Log("Hello World!");
+        Debug.Log("Hello World!!?!?!?!?");
 
-        var canvas = GameObject.Find("MainCanvas");
+        //var canvas = GameObject.Find("MainCanvas");
+        
+        var canvas = RoR2.RoR2Application.instance.mainCanvas;
 
         if (canvas == null)
         {

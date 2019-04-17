@@ -25,7 +25,7 @@ namespace ModTool.Exporting.Editor
         private ExportStep[] exportSteps = new ExportStep[]
         {
             new StartExport(),
-            new Verify(),
+            // new Verify(),
             new GetContent(),
             new CreateBackup(),
             new ImportScripts(),

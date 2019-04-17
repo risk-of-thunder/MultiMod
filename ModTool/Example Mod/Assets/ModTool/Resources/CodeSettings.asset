@@ -70,18 +70,4 @@ MonoBehaviour:
     restrictionMode: 0
     nameSpace: System.IO
     includeNested: 1
-  _apiAssemblies:
-  - Assembly-CSharp
-  - BepInEx
-  - Facepunch.Steamworks
-  - MMHOOK_Assembly-CSharp
-  - MonoMod.RuntimeDetour
-  - Rewired_Windows_Lib
-  - R2API
-  - Rewired_Core
-  - Rewired_CSharp
-  - TextMeshPro-1.0.55.2017.1.0b11
-  - Unity.Postprocessing.Runtime
-  - UnityEngine.CoreModule
-  - Wwise
-  - Zio
+  _apiAssemblies: []
