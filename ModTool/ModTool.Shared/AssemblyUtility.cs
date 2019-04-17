@@ -76,6 +76,8 @@ namespace ModTool.Shared
 
                 if ((assemblyFilter & AssemblyFilter.ModAssemblies) != 0)
                     assemblies.Add(assembly);
+
+				assemblyDefinition.Dispose();
             }
         }                 
     }    
