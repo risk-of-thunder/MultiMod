@@ -38,3 +38,6 @@ ehthumbs.db
 
 /Assets/ModTool/*.dll
 /Assets/ModTool/Editor/*.dll
+
+/Assets/ModTool/*.dll.meta
+/Assets/ModTool/Editor/*.dll.meta

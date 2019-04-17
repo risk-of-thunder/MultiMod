@@ -22,7 +22,7 @@ public class ExampleMod : ModBehaviour
         gobj.transform.SetParent(canvas.transform, false);
         var rect = gobj.GetComponent<RectTransform>();
         rect.offsetMin = rect.offsetMax = Vector2.zero;
-        rect.anchorMin = new Vector2(0.25f, 0.25f);
-        rect.anchorMax = new Vector2(0.75f, 0.75f);
+        rect.anchorMin = new Vector2(0.00f, 0.00f);
+        rect.anchorMax = new Vector2(1.00f, 1.00f);
     }
 }
