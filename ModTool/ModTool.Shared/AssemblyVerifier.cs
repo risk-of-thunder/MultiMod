@@ -45,19 +45,19 @@ namespace ModTool.Shared.Verification
 
         private static bool VerifyAssembly(string path)
         {
-			using (AssemblyDefinition assembly = AssemblyDefinition.ReadAssembly(path))
-			{
-				foreach (ModuleDefinition module in assembly.Modules)
-				{
-					DefaultAssemblyResolver resolver = (DefaultAssemblyResolver)module.AssemblyResolver;
+            using (AssemblyDefinition assembly = AssemblyDefinition.ReadAssembly(path))
+            {
+                foreach (ModuleDefinition module in assembly.Modules)
+                {
+                    DefaultAssemblyResolver resolver = (DefaultAssemblyResolver)module.AssemblyResolver;
 
-					resolver.AddSearchDirectory(Path.GetDirectoryName(path));
+                    resolver.AddSearchDirectory(Path.GetDirectoryName(path));
 
-					AddSearchDirectories(resolver);
+                    AddSearchDirectories(resolver);
 
-					if (!VerifyModule(module))
-						return false;
-				}
+                    if (!VerifyModule(module))
+                        return false;
+                }
             }
 
             return true;

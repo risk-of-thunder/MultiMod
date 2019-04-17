@@ -243,26 +243,26 @@ namespace ModTool.Exporting.Editor
                 if (!File.Exists(scriptAssemblyPath))
                     continue;
 
-				using (AssemblyDefinition assembly = AssemblyDefinition.ReadAssembly(scriptAssemblyPath))
-				{
-					AssemblyNameDefinition assemblyName = assembly.Name;
+                using (AssemblyDefinition assembly = AssemblyDefinition.ReadAssembly(scriptAssemblyPath))
+                {
+                    AssemblyNameDefinition assemblyName = assembly.Name;
 
-					DefaultAssemblyResolver resolver = (DefaultAssemblyResolver)assembly.MainModule.AssemblyResolver;
+                    DefaultAssemblyResolver resolver = (DefaultAssemblyResolver)assembly.MainModule.AssemblyResolver;
 
-					foreach (string searchDirectory in searchDirectories)
-						resolver.AddSearchDirectory(searchDirectory);
+                    foreach (string searchDirectory in searchDirectories)
+                        resolver.AddSearchDirectory(searchDirectory);
 
-					assemblyName.Name = prefix + assemblyName.Name;
+                    assemblyName.Name = prefix + assemblyName.Name;
 
-					foreach (var reference in assembly.MainModule.AssemblyReferences)
-					{
-						if (reference.Name.Contains("firstpass"))
-							reference.Name = prefix + reference.Name;
-					}
+                    foreach (var reference in assembly.MainModule.AssemblyReferences)
+                    {
+                        if (reference.Name.Contains("firstpass"))
+                            reference.Name = prefix + reference.Name;
+                    }
 
-					scriptAssemblyPath = Path.Combine(modToolDirectory, assemblyName.Name + ".dll");
+                    scriptAssemblyPath = Path.Combine(modToolDirectory, assemblyName.Name + ".dll");
 
-					assembly.Write(scriptAssemblyPath);
+                    assembly.Write(scriptAssemblyPath);
                 }
 
                 data.scriptAssemblies.Add(new Asset(scriptAssemblyPath));
@@ -329,10 +329,10 @@ namespace ModTool.Exporting.Editor
         private static void UpdateReferences(IEnumerable<Asset> assets, Asset scriptAssembly)
         {
             string assemblyGuid = AssetDatabase.AssetPathToGUID(scriptAssembly.assetPath);
-			using (ModuleDefinition module = ModuleDefinition.ReadModule(scriptAssembly.assetPath))
-			{
-				foreach (Asset asset in assets)
-					UpdateReferences(asset, assemblyGuid, module.Types);
+            using (ModuleDefinition module = ModuleDefinition.ReadModule(scriptAssembly.assetPath))
+            {
+                foreach (Asset asset in assets)
+                    UpdateReferences(asset, assemblyGuid, module.Types);
             }
         }
 
