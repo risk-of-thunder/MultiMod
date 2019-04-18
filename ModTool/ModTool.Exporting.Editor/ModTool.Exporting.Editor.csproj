@@ -82,6 +82,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ModTool.Cecil\ModTool.Cecil.csproj">
+      <Project>{4fa33418-270d-4617-b6af-2cc7f97d2558}</Project>
+      <Name>ModTool.Cecil</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ModTool.Interface\ModTool.Interface.csproj">
       <Project>{f3f7f434-f83d-4ab5-872c-122d89ec81ea}</Project>
       <Name>ModTool.Interface</Name>

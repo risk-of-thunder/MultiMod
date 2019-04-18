@@ -63,6 +63,10 @@
     <Compile Include="SettingsEditorWindow.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ModTool.Cecil\ModTool.Cecil.csproj">
+      <Project>{4FA33418-270D-4617-B6AF-2CC7F97D2558}</Project>
+      <Name>ModTool.Cecil</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ModTool.Exporting.Editor\ModTool.Exporting.Editor.csproj">
       <Project>{22e3c484-3ebd-4469-a704-acf23b4fe8dd}</Project>
       <Name>ModTool.Exporting.Editor</Name>

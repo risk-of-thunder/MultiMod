@@ -1,7 +1,7 @@
 ﻿using System;
 
-namespace ModTool.Shared.Verification
-{
+namespace ModTool.Shared
+{ 
     /// <summary>
     /// Represents a member's name.
     /// </summary>

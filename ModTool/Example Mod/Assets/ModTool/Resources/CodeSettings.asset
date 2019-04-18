@@ -9,7 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 562734972, guid: e2437c13964984e4188bcd6a2a6aa840, type: 3}
+  m_Script: {fileID: 562734972, guid: db96eb6cca3a55c478e6d65475bd6d63, type: 3}
   m_Name: CodeSettings
   m_EditorClassIdentifier: 
   _inheritanceRestrictions:
@@ -70,4 +70,19 @@ MonoBehaviour:
     restrictionMode: 0
     nameSpace: System.IO
     includeNested: 1
-  _apiAssemblies: []
+  _apiAssemblies:
+  - Assembly-CSharp
+  - BepInEx
+  - Facepunch.Steamworks
+  - MMHOOK_Assembly-CSharp
+  - Mono.Cecil
+  - MonoMod.RuntimeDetour
+  - MonoMod.Utils
+  - Rewired_Core
+  - Rewired_CSharp
+  - Rewired_Windows_Lib
+  - TextMeshPro-1.0.55.2017.1.0b11
+  - Unity.Postprocessing.Runtime
+  - UnityEngine.CoreModule
+  - Wwise
+  - Zio

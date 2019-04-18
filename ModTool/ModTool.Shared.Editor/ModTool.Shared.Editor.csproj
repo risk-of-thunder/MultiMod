@@ -76,8 +76,8 @@ xcopy /Y "$(TargetDir)$(TargetName).xml" "$(SolutionDir)ModTool\Example\Assets\M
 
 xcopy /Y "$(TargetDir)$(TargetName).dll" "$(SolutionDir)ModTool\Example Mod\Assets\ModTool\Editor\*"
 
-xcopy /Y "$(TargetDir)Mono.Cecil.dll" "$(SolutionDir)ModTool\Example\Assets\ModTool\Mono.Cecil\*"
-xcopy /Y "$(TargetDir)Mono.Cecil.dll" "$(SolutionDir)ModTool\Example Mod\Assets\ModTool\Mono.Cecil\*"</PostBuildEvent>
+xcopy /Y "$(TargetDir)Mono.Cecil.dll" "$(SolutionDir)ModTool\Example\Assets\ModTool\Editor\*"
+xcopy /Y "$(TargetDir)Mono.Cecil.dll" "$(SolutionDir)ModTool\Example Mod\Assets\ModTool\Editor\*"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

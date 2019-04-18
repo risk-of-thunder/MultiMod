@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEditor;
 using ModTool.Shared;
 using ModTool.Shared.Editor;
+using ModTool.Cecil;
 
 //Note: ModTool uses an old version of Mono.Cecil in the editor
 #pragma warning disable CS0618

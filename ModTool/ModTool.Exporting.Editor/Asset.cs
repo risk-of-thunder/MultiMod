@@ -128,7 +128,8 @@ namespace ModTool.Exporting.Editor
         public void Delete()
         {
             //Note: AssetDatabase.DeleteAsset updates the asset database, which can trigger an unwanted compilation/script reload
-            File.Delete(assetPath);
+            AssetDatabase.DeleteAsset(assetPath);
+            // File.Delete(assetPath);
         }
     }
 }

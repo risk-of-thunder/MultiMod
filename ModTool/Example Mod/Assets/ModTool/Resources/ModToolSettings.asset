@@ -9,7 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 1009295391, guid: e2437c13964984e4188bcd6a2a6aa840, type: 3}
+  m_Script: {fileID: 1009295391, guid: db96eb6cca3a55c478e6d65475bd6d63, type: 3}
   m_Name: ModToolSettings
   m_EditorClassIdentifier: 
   _productName: Example

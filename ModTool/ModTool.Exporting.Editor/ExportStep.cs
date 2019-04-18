@@ -7,7 +7,7 @@ using UnityEditor;
 using UnityEngine.SceneManagement;
 using UnityEditor.SceneManagement;
 using ModTool.Shared;
-using ModTool.Shared.Verification;
+using ModTool.Cecil;
 using ModTool.Shared.Editor;
 using Mono.Cecil;
 using System.Text.RegularExpressions;
@@ -173,7 +173,7 @@ namespace ModTool.Exporting.Editor
         private List<Asset> GetAssemblies()
         {            
             List<Asset> assemblies = new List<Asset>();
-
+            Debug.Log("Gathering assemblies...");
             foreach (string path in AssemblyUtility.GetAssemblies(assetsDirectory, AssemblyFilter.ModAssemblies))
             {
                 Asset assembly = new Asset(path);
@@ -193,24 +193,24 @@ namespace ModTool.Exporting.Editor
         {
             AssetDatabase.SaveAssets();
 
-            if (Directory.Exists(Asset.backupDirectory))
-                Directory.Delete(Asset.backupDirectory, true);
+            //if (Directory.Exists(Asset.backupDirectory))
+            //    Directory.Delete(Asset.backupDirectory, true);
 
-            Directory.CreateDirectory(Asset.backupDirectory);
+            //Directory.CreateDirectory(Asset.backupDirectory);
 
             if (Directory.Exists(tempAssemblyDirectory))
                 Directory.Delete(tempAssemblyDirectory, true);
             
             Directory.CreateDirectory(tempAssemblyDirectory);
             
-            foreach (Asset asset in data.assets)
-                asset.Backup();
+            //foreach (Asset asset in data.assets)
+            //    asset.Backup();
 
-            foreach (Asset scene in data.scenes)
-                scene.Backup();
+            //foreach (Asset scene in data.scenes)
+            //    scene.Backup();
 
-            foreach (Asset script in data.scripts)
-                script.Backup();
+            //foreach (Asset script in data.scripts)
+            //    script.Backup();
 
             foreach (string path in Directory.GetFiles(assemblyDirectory))
                 File.Copy(path, Path.Combine(tempAssemblyDirectory, Path.GetFileName(path)));
@@ -223,47 +223,82 @@ namespace ModTool.Exporting.Editor
 
         internal override void Execute(ExportSettings settings, ExportData data)
         {
-            if((data.content & ModContent.Code) != ModContent.Code)
+            Debug.Log($"Starting Script Import.");
+
+            if ((data.content & ModContent.Code) != ModContent.Code)
                 return;
 
+            Debug.Log($"Exporting code assets is allowed by ExportSettings.");
+
             foreach (Asset script in data.scripts)
-                script.Delete();
+            {
+                Debug.Log($"NOT Deleting asset: {script.assetPath}");
+                // script.Delete();
+            }
 
             string prefix = data.prefix.Replace(" ", "");
+            
 
             if (!string.IsNullOrEmpty(settings.version))
                 prefix += settings.version.Replace(" ", "") + "-";
+
+            Debug.Log($"Prefix set to {prefix}");
 
             List<string> searchDirectories = GetSearchDirectories();
 
             foreach (string scriptAssembly in scriptAssemblies)
             {
+
                 string scriptAssemblyPath = Path.Combine(tempAssemblyDirectory, scriptAssembly);
 
                 if (!File.Exists(scriptAssemblyPath))
+                {
+                    Debug.LogWarning($"Couldn't find assembly at: {scriptAssemblyPath}");
                     continue;
+                }
+
+                Debug.Log($"Reading assembly at path: {scriptAssemblyPath}");
 
                 using (AssemblyDefinition assembly = AssemblyDefinition.ReadAssembly(scriptAssemblyPath))
                 {
                     AssemblyNameDefinition assemblyName = assembly.Name;
 
+                    Debug.Log($"Loaded assembly: {assemblyName}");
+
                     DefaultAssemblyResolver resolver = (DefaultAssemblyResolver)assembly.MainModule.AssemblyResolver;
 
+                    Debug.Log("Created resolver.");
+
                     foreach (string searchDirectory in searchDirectories)
+                    {
                         resolver.AddSearchDirectory(searchDirectory);
+                        Debug.Log($"Added path to resolver: {searchDirectory}");
+                    }
 
                     assemblyName.Name = prefix + assemblyName.Name;
 
+                    Debug.Log($"Setting assembly name: {assemblyName.Name}");
+
                     foreach (var reference in assembly.MainModule.AssemblyReferences)
                     {
+                        Debug.Log($"Checking reference for first-pass: {reference.Name}");
                         if (reference.Name.Contains("firstpass"))
+                        {
                             reference.Name = prefix + reference.Name;
+                            Debug.Log("Found first-pass. Setting reference name: {reference.Name}");
+                        }
                     }
 
                     scriptAssemblyPath = Path.Combine(modToolDirectory, assemblyName.Name + ".dll");
 
+                    Debug.Log($"Writing assembly to: {scriptAssemblyPath}");
+
                     assembly.Write(scriptAssemblyPath);
+
+                    Debug.Log("Assembly written.");
                 }
+
+                Debug.Log($"Storing script assembly asset: {scriptAssemblyPath}");
 
                 data.scriptAssemblies.Add(new Asset(scriptAssemblyPath));
             }

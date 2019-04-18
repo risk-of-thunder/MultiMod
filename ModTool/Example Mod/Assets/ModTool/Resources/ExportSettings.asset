@@ -9,12 +9,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: -1672532349, guid: ba877f1a3e9917d48bea2302648d3866, type: 3}
+  m_Script: {fileID: -1672532349, guid: 193176afd47288b4d825c65d376ebcc3, type: 3}
   m_Name: ExportSettings
   m_EditorClassIdentifier: 
   _name: ExampleMod
   _author: MultiMod
-  _description: ExampleMod for MultiMod
+  _description: 
   _version: 0.0.1
   _platforms: 1
   _content: 6

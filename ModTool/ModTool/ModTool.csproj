@@ -73,6 +73,10 @@
     <Compile Include="UnitySingleton.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ModTool.Cecil\ModTool.Cecil.csproj">
+      <Project>{4FA33418-270D-4617-B6AF-2CC7F97D2558}</Project>
+      <Name>ModTool.Cecil</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ModTool.Interface\ModTool.Interface.csproj">
       <Project>{f3f7f434-f83d-4ab5-872c-122d89ec81ea}</Project>
       <Name>ModTool.Interface</Name>

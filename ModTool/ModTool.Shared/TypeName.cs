@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ModTool.Shared.Verification
+namespace ModTool.Shared
 {
     /// <summary>
     /// Represents a Type's name.
