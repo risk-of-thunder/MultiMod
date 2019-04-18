@@ -26,8 +26,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModTool.Exporting.Editor", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModTool.Shared.Editor", "ModTool\ModTool.Shared.Editor\ModTool.Shared.Editor.csproj", "{19706045-1011-4AEE-915E-F980613A79CC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModTool.Shared.Unity", "ModTool\ModTool.Shared.Unity\ModTool.Shared.Unity.csproj", "{94119B0C-BE87-4EC3-852B-314E6EE8214C}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModTool.Cecil", "ModTool\ModTool.Cecil\ModTool.Cecil.csproj", "{4FA33418-270D-4617-B6AF-2CC7F97D2558}"
 EndProject
 Global
@@ -64,10 +62,6 @@ Global
 		{19706045-1011-4AEE-915E-F980613A79CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{19706045-1011-4AEE-915E-F980613A79CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{19706045-1011-4AEE-915E-F980613A79CC}.Release|Any CPU.Build.0 = Release|Any CPU
-		{94119B0C-BE87-4EC3-852B-314E6EE8214C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{94119B0C-BE87-4EC3-852B-314E6EE8214C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{94119B0C-BE87-4EC3-852B-314E6EE8214C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{94119B0C-BE87-4EC3-852B-314E6EE8214C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{4FA33418-270D-4617-B6AF-2CC7F97D2558}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{4FA33418-270D-4617-B6AF-2CC7F97D2558}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4FA33418-270D-4617-B6AF-2CC7F97D2558}.Release|Any CPU.ActiveCfg = Release|Any CPU

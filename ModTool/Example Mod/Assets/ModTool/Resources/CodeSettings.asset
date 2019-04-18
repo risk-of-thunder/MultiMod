@@ -73,16 +73,5 @@ MonoBehaviour:
   _apiAssemblies:
   - Assembly-CSharp
   - BepInEx
-  - Facepunch.Steamworks
+  - R2API
   - MMHOOK_Assembly-CSharp
-  - Mono.Cecil
-  - MonoMod.RuntimeDetour
-  - MonoMod.Utils
-  - Rewired_Core
-  - Rewired_CSharp
-  - Rewired_Windows_Lib
-  - TextMeshPro-1.0.55.2017.1.0b11
-  - Unity.Postprocessing.Runtime
-  - UnityEngine.CoreModule
-  - Wwise
-  - Zio

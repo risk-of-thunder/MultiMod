@@ -8,7 +8,7 @@ public class ExampleMod : ModBehaviour
     public ContentHandler Content { get; set; }
     void Start()
     {
-        Debug.Log("Hello World!!!?");
+        Debug.Log("Hello World!!?");
 
 
         On.RoR2.UserProfile.HasSurvivorUnlocked += (o, s, i) => true;

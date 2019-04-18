@@ -24,6 +24,7 @@ namespace ModTool.Exporting.Editor
 
         protected static readonly string[] scriptAssemblies =
         {
+            "ExampleMod.dll",
             "Assembly-CSharp.dll",
             "Assembly-Csharp-firstpass.dll",
             "Assembly-UnityScript.dll",

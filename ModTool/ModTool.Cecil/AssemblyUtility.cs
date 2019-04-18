@@ -52,6 +52,8 @@ namespace ModTool.Cecil
 
                 string name = assemblyDefinition.Name.Name;
 
+                assemblyDefinition.Dispose();
+
                 if (name == "ModTool" || name.StartsWith("ModTool."))
                 {
                     if ((assemblyFilter & AssemblyFilter.ModToolAssemblies) != 0)
@@ -91,8 +93,6 @@ namespace ModTool.Cecil
                     LogUtility.LogDebug($"Adding assembly: {name}");
                     assemblies.Add(assembly);
                 }
-
-                assemblyDefinition.Dispose();
             }
         }                 
     }    
