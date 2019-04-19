@@ -5,10 +5,7 @@ namespace MultiMod.Editor
 {
     internal class ExporterEditorWindow : EditorWindow
     {
-        public ModExporter exporter;
-
         private ExportSettings exportSettings;
-
         private UnityEditor.Editor exportSettingsEditor;
 
         [MenuItem("MultiMod/Export Mod")]
@@ -22,12 +19,7 @@ namespace MultiMod.Editor
 
         void OnEnable()
         {
-            exporter = ModExporter.instance;
-
             exportSettings = ExportSettings.instance;
-
-            Debug.LogError($"ExportSettings.instance is null: {exportSettings==null}");
-
             exportSettingsEditor = UnityEditor.Editor.CreateEditor(exportSettings);
         }
 
@@ -38,16 +30,16 @@ namespace MultiMod.Editor
 
         void OnGUI()
         {
-            GUI.enabled = !EditorApplication.isCompiling && !exporter.isExporting && !Application.isPlaying;
+            GUI.enabled = !EditorApplication.isCompiling && !Application.isPlaying;
 
             exportSettingsEditor.OnInspectorGUI();
 
             GUILayout.FlexibleSpace();
 
-            bool buttonPressed = GUILayout.Button("Export Mod", GUILayout.Height(30));
+            bool buttonPressed = GUILayout.Button("Export", GUILayout.Height(30));
 
             if (buttonPressed)
-                exporter.ExportMod(exportSettings);
+                Export.ExportMod(exportSettings);
         }
     }
 }

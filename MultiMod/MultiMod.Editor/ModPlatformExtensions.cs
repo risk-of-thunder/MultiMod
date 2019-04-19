@@ -21,19 +21,19 @@ namespace MultiMod.Editor
             switch (buildTarget)
             {
                 case BuildTarget.StandaloneWindows:
-                    if ((self & ModPlatform.Windows) == ModPlatform.Windows)
+                    if (( self & ModPlatform.Windows ) == ModPlatform.Windows)
                         return true;
                     break;
                 case BuildTarget.StandaloneLinuxUniversal:
-                    if ((self & ModPlatform.Linux) == ModPlatform.Linux)
+                    if (( self & ModPlatform.Linux ) == ModPlatform.Linux)
                         return true;
                     break;
                 case BuildTarget.StandaloneOSX:
-                    if ((self & ModPlatform.OSX) == ModPlatform.OSX)
+                    if (( self & ModPlatform.OSX ) == ModPlatform.OSX)
                         return true;
                     break;
                 case BuildTarget.Android:
-                    if ((self & ModPlatform.Android) == ModPlatform.Android)
+                    if (( self & ModPlatform.Android ) == ModPlatform.Android)
                         return true;
                     break;
             }

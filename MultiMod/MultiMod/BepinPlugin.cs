@@ -69,6 +69,9 @@ namespace MultiMod
                         var component_type = component.GetType();
                         var property = component_type.GetProperty("Content");
                         property.SetValue(component, mod.contentHandler, null);
+                    } else
+                    {
+                        Debug.Log($"{mod.name} != {prefab.name}");
                     }
                 }
 

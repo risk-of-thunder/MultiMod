@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ExampleMod : MonoBehaviour
+public class ExampleMod : ModBehaviour
 {
     public GameObject prefab;
     public ContentHandler Content { get; set; }

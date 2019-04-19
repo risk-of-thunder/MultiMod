@@ -78,19 +78,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Asset.cs" />
     <Compile Include="AssetUtility.cs" />
-    <Compile Include="EditorModPlatformExtensions.cs" />
+    <Compile Include="ModPlatformExtensions.cs" />
+    <Compile Include="Export.cs" />
     <Compile Include="EditorScriptableSingleton.cs" />
-    <Compile Include="ExportData.cs" />
     <Compile Include="ExporterEditorWindow.cs" />
     <Compile Include="ExportSettings.cs" />
     <Compile Include="ExportSettingsEditor.cs" />
-    <Compile Include="ExportStep.cs" />
-    <Compile Include="FilteredEnumMaskField.cs" />
-    <Compile Include="ModExporter.cs" />
-    <Compile Include="ModSurrogate.cs" />
-    <Compile Include="MD4.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
