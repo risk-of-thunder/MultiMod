@@ -68,8 +68,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AssemblyFilter.cs" />
     <Compile Include="AssemblyUtility.cs" />
-    <Compile Include="Extensions.cs" />
+    <Compile Include="CecilExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

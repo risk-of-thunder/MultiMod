@@ -78,8 +78,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AsmDef.cs" />
     <Compile Include="AssetUtility.cs" />
-    <Compile Include="ModPlatformExtensions.cs" />
+    <Compile Include="EditorModPlatformExtensions.cs" />
     <Compile Include="Export.cs" />
     <Compile Include="EditorScriptableSingleton.cs" />
     <Compile Include="ExporterEditorWindow.cs" />

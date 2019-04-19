@@ -5,18 +5,6 @@ using MultiMod.Interface;
 namespace MultiMod
 {
     /// <summary>
-    ///     Represents a load state.
-    /// </summary>
-    public enum ResourceLoadState
-    {
-        Unloaded,
-        Loading,
-        Loaded,
-        Cancelling,
-        Unloading
-    }
-
-    /// <summary>
     ///     A class that supports async loading of various resources.
     /// </summary>
     public abstract class Resource : IResource
