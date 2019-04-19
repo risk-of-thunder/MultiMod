@@ -1,20 +1,22 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.SceneManagement;
+using Object = UnityEngine.Object;
 
 namespace MultiMod.Interface
 {
     /// <summary>
-    /// A MonoBehaviour class with some added functionality for Mods.
+    ///     A MonoBehaviour class with some added functionality for Mods.
     /// </summary>
     public abstract class ModBehaviour : MonoBehaviour, IModHandler
     {
         /// <summary>
-        /// This Mod's ContentHandler, which provides the Mod's prefabs, scenes and Instantiate and AddComponent methods.
+        ///     This Mod's ContentHandler, which provides the Mod's prefabs, scenes and Instantiate and AddComponent methods.
         /// </summary>
         protected ContentHandler contentHandler { get; private set; }
 
         /// <summary>
-        /// Called when the Mod is loaded.
+        ///     Called when the Mod is loaded.
         /// </summary>
         /// <param name="contentHandler">The Mod's ContentHandler</param>
         public void OnLoaded(ContentHandler contentHandler)
@@ -23,15 +25,15 @@ namespace MultiMod.Interface
         }
 
         /// <summary>
-        /// Called when the mod is unloaded.
+        ///     Called when the mod is unloaded.
         /// </summary>
         public void OnUnloaded()
-        {   
-            
+        {
         }
-        
+
         /// <summary>
-        /// Use this instead of the static Instantiate methods in UnityEngine.Object. This ensures objects are spawned in the right scene.
+        ///     Use this instead of the static Instantiate methods in UnityEngine.Object. This ensures objects are spawned in the
+        ///     right scene.
         /// </summary>
         /// <param name="original">An existing object that you want to make a copy of.</param>
         /// <param name="position">Position for the new object.</param>
@@ -41,11 +43,13 @@ namespace MultiMod.Interface
         {
             if (contentHandler == null)
             {
-                Debug.LogWarning("ModBehaviour " + GetType().Name + " has not been intialized. Please do not use Instantiate() in Awake() or OnEnable().", gameObject);
+                Debug.LogWarning(
+                    "ModBehaviour " + GetType().Name +
+                    " has not been intialized. Please do not use Instantiate() in Awake() or OnEnable().", gameObject);
                 return null;
             }
 
-            Object o = contentHandler.Instantiate(original, position, rotation);
+            var o = contentHandler.Instantiate(original, position, rotation);
 
             if (o is GameObject)
                 SceneManager.MoveGameObjectToScene(o as GameObject, gameObject.scene);
@@ -54,7 +58,7 @@ namespace MultiMod.Interface
         }
 
         /// <summary>
-        /// Use this instead of the static methods in UnityEngine.Object. This ensures objects are spawned in the right scene.
+        ///     Use this instead of the static methods in UnityEngine.Object. This ensures objects are spawned in the right scene.
         /// </summary>
         /// <param name="original">An existing object that you want to make a copy of.</param>
         /// <returns>A clone of the original object.</returns>
@@ -64,7 +68,7 @@ namespace MultiMod.Interface
         }
 
         /// <summary>
-        /// Use this instead of the static methods in UnityEngine.Object. This ensures objects are spawned in the right scene.
+        ///     Use this instead of the static methods in UnityEngine.Object. This ensures objects are spawned in the right scene.
         /// </summary>
         /// <typeparam name="T">The type of the original.</typeparam>
         /// <param name="original">An existing Object to copy.</param>
@@ -73,11 +77,12 @@ namespace MultiMod.Interface
         {
             if (contentHandler == null)
             {
-                Debug.LogWarning("ModBehaviour " + GetType().Name + " has not been intialized. Please do not use Instantiate() in Awake() or OnEnable().");
+                Debug.LogWarning("ModBehaviour " + GetType().Name +
+                                 " has not been intialized. Please do not use Instantiate() in Awake() or OnEnable().");
                 return default(T);
             }
 
-            T o = contentHandler.Instantiate(original);
+            var o = contentHandler.Instantiate(original);
 
             if (o is GameObject)
                 SceneManager.MoveGameObjectToScene(o as GameObject, gameObject.scene);
@@ -86,7 +91,7 @@ namespace MultiMod.Interface
         }
 
         /// <summary>
-        /// Add a Component to this Component's GameObject.
+        ///     Add a Component to this Component's GameObject.
         /// </summary>
         /// <typeparam name="T">The Component to add.</typeparam>
         /// <returns>The Added Component.</returns>
@@ -96,7 +101,7 @@ namespace MultiMod.Interface
         }
 
         /// <summary>
-        /// Add a Component to a GameObject
+        ///     Add a Component to a GameObject
         /// </summary>
         /// <typeparam name="T">The Type of the Component to add.</typeparam>
         /// <param name="gameObject">The GameObject to add the Component to.</param>
@@ -105,7 +110,9 @@ namespace MultiMod.Interface
         {
             if (contentHandler == null)
             {
-                Debug.LogWarning("ModBehaviour " + GetType().Name + " has not been intialized. Please do not use AddComponent() in Awake() or OnEnable().", gameObject);
+                Debug.LogWarning(
+                    "ModBehaviour " + GetType().Name +
+                    " has not been intialized. Please do not use AddComponent() in Awake() or OnEnable().", gameObject);
                 return default(T);
             }
 
@@ -113,26 +120,28 @@ namespace MultiMod.Interface
         }
 
         /// <summary>
-        /// Add a Component this Component's GameObject
+        ///     Add a Component this Component's GameObject
         /// </summary>
         /// <param name="componentType">The Type of the Component to add.</param>
         /// <returns>The added Component</returns>
-        public Component AddComponent(System.Type componentType)
+        public Component AddComponent(Type componentType)
         {
             return AddComponent(componentType, gameObject);
         }
 
         /// <summary>
-        /// Add a Component to a GameObject
+        ///     Add a Component to a GameObject
         /// </summary>
         /// <param name="componentType">The Type of the Component to add.</param>
         /// <param name="gameObject">The GameObject to add the Component to.</param>
         /// <returns>The added Component</returns>
-        public Component AddComponent(System.Type componentType, GameObject gameObject)
+        public Component AddComponent(Type componentType, GameObject gameObject)
         {
             if (contentHandler == null)
             {
-                Debug.LogWarning("ModBehaviour " + GetType().Name + " has not been intialized. Please do not use AddComponent() in Awake() or OnEnable().", gameObject);
+                Debug.LogWarning(
+                    "ModBehaviour " + GetType().Name +
+                    " has not been intialized. Please do not use AddComponent() in Awake() or OnEnable().", gameObject);
                 return null;
             }
 
@@ -140,18 +149,20 @@ namespace MultiMod.Interface
         }
 
         /// <summary>
-        /// Remove an object.
+        ///     Remove an object.
         /// </summary>
         /// <param name="obj">The Object to destroy.</param>
         public new void Destroy(Object obj)
         {
             if (contentHandler == null)
             {
-                Debug.LogWarning("ModBehaviour " + GetType().Name + " has not been intialized. Please do not use Destroy() in Awake() or OnEnable().", gameObject);
+                Debug.LogWarning(
+                    "ModBehaviour " + GetType().Name +
+                    " has not been intialized. Please do not use Destroy() in Awake() or OnEnable().", gameObject);
                 return;
             }
 
             contentHandler.Destroy(obj);
-        }        
+        }
     }
 }

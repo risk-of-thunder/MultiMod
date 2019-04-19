@@ -6,7 +6,7 @@ using System.Threading;
 namespace MultiMod
 {
     /// <summary>
-    /// Singleton Component for dispatching Coroutines and Actions on the main Thread.
+    ///     Singleton Component for dispatching Coroutines and Actions on the main Thread.
     /// </summary>
     internal class Dispatcher : UnitySingleton<Dispatcher>
     {
@@ -20,11 +20,11 @@ namespace MultiMod
             main = Thread.CurrentThread;
         }
 
-        void Update()
+        private void Update()
         {
             ProcessQueue();
         }
-        
+
         protected override void OnDestroy()
         {
             ProcessQueue();
@@ -35,27 +35,21 @@ namespace MultiMod
         {
             lock (_executionQueue)
             {
-                while (_executionQueue.Count > 0)
-                {
-                    _executionQueue.Dequeue().Invoke();
-                }
+                while (_executionQueue.Count > 0) _executionQueue.Dequeue().Invoke();
             }
         }
 
         /// <summary>
-        /// Enqueue a Coroutine.
+        ///     Enqueue a Coroutine.
         /// </summary>
         /// <param name="routine"></param>
         public void Enqueue(IEnumerator routine)
         {
-            Enqueue(() =>
-            {
-                StartCoroutine(routine);
-            });            
+            Enqueue(() => { StartCoroutine(routine); });
         }
 
         /// <summary>
-        /// Enqueue an action on the main Thread.
+        ///     Enqueue an action on the main Thread.
         /// </summary>
         /// <param name="action"></param>
         /// <param name="delayCall"></param>
@@ -72,6 +66,6 @@ namespace MultiMod
             {
                 _executionQueue.Enqueue(action);
             }
-        }        
+        }
     }
 }

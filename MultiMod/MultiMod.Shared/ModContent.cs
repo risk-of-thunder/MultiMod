@@ -3,8 +3,13 @@
 namespace MultiMod.Shared
 {
     /// <summary>
-    /// Flags for different types of content that can be included in a Mod. 
+    ///     Flags for different types of content that can be included in a Mod.
     /// </summary>
     [Flags]
-    public enum ModContent { Scenes = 1, Assets = 2, Code = 4 }
+    public enum ModContent
+    {
+        Scenes = 1,
+        Assets = 2,
+        Code = 4
+    }
 }

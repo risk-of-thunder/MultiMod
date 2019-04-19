@@ -1,27 +1,27 @@
-﻿using MultiMod.Shared;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using MultiMod.Shared;
 using UnityEditor;
 using UnityEngine;
 
 namespace MultiMod.Editor
 {
     /// <summary>
-    /// A set of utilities for handling assets.
+    ///     A set of utilities for handling assets.
     /// </summary>
     public class AssetUtility
     {
         /// <summary>
-        /// Finds and returns the directory where ModTool is located.
+        ///     Finds and returns the directory where ModTool is located.
         /// </summary>
         /// <returns>The directory where ModTool is located.</returns>
         public static string GetModToolDirectory()
         {
-            string location = typeof(ModInfo).Assembly.Location;
+            var location = typeof(ModInfo).Assembly.Location;
 
-            string modToolDirectory = Path.GetDirectoryName(location);
+            var modToolDirectory = Path.GetDirectoryName(location);
 
             if (!Directory.Exists(modToolDirectory))
                 modToolDirectory = Path.Combine(Directory.GetCurrentDirectory(), "Assets");
@@ -30,40 +30,41 @@ namespace MultiMod.Editor
         }
 
         /// <summary>
-        /// Get the relative path for an absolute path.
+        ///     Get the relative path for an absolute path.
         /// </summary>
         /// <param name="path">The absolute path.</param>
         /// <returns>The relative path.</returns>
         public static string GetRelativePath(string path)
         {
-            string currentDirectory = Directory.GetCurrentDirectory();
+            var currentDirectory = Directory.GetCurrentDirectory();
 
-            Uri pathUri = new Uri(path);
+            var pathUri = new Uri(path);
 
             if (!currentDirectory.EndsWith(Path.DirectorySeparatorChar.ToString()))
                 currentDirectory += Path.DirectorySeparatorChar;
 
-            Uri directoryUri = new Uri(currentDirectory);
+            var directoryUri = new Uri(currentDirectory);
 
-            string relativePath = Uri.UnescapeDataString(directoryUri.MakeRelativeUri(pathUri).ToString().Replace('/', Path.DirectorySeparatorChar));
+            var relativePath = Uri.UnescapeDataString(directoryUri.MakeRelativeUri(pathUri).ToString()
+                .Replace('/', Path.DirectorySeparatorChar));
 
             return relativePath;
         }
 
         /// <summary>
-        /// Get all asset paths for assets that match the filter.
+        ///     Get all asset paths for assets that match the filter.
         /// </summary>
         /// <param name="filter">The filter string can contain search data for: names, asset labels and types (class names).</param>
         /// <returns>A list of asset paths</returns>
         public static List<string> GetAssets(string filter)
         {
-            List<string> assetPaths = new List<string>();
+            var assetPaths = new List<string>();
 
-            string[] assetGuids = AssetDatabase.FindAssets(filter);
+            var assetGuids = AssetDatabase.FindAssets(filter);
 
-            foreach (string guid in assetGuids)
+            foreach (var guid in assetGuids)
             {
-                string assetPath = AssetDatabase.GUIDToAssetPath(guid);
+                var assetPath = AssetDatabase.GUIDToAssetPath(guid);
 
                 if (assetPath.Contains("MultiMod"))
                     continue;
@@ -82,20 +83,20 @@ namespace MultiMod.Editor
         }
 
         /// <summary>
-        /// Move assets to a directory.
+        ///     Move assets to a directory.
         /// </summary>
         /// <param name="assetPaths">A list of asset paths</param>
         /// <param name="targetDirectory">The directory to move all assets to.</param>
         public static void MoveAssets(List<string> assetPaths, string targetDirectory)
         {
-            for (int i = 0; i < assetPaths.Count; i++)
+            for (var i = 0; i < assetPaths.Count; i++)
             {
-                string assetPath = assetPaths[i];
+                var assetPath = assetPaths[i];
 
                 if (Path.GetDirectoryName(assetPath) != targetDirectory)
                 {
-                    string assetName = Path.GetFileName(assetPath);
-                    string newAssetPath = Path.Combine(targetDirectory, assetName);
+                    var assetName = Path.GetFileName(assetPath);
+                    var newAssetPath = Path.Combine(targetDirectory, assetName);
 
                     AssetDatabase.MoveAsset(assetPath, newAssetPath);
                     assetPaths[i] = newAssetPath;
@@ -104,15 +105,16 @@ namespace MultiMod.Editor
         }
 
         /// <summary>
-        /// Create an asset for a ScriptableObject in a ModTool Resources directory.
+        ///     Create an asset for a ScriptableObject in a ModTool Resources directory.
         /// </summary>
         /// <param name="scriptableObject">A ScriptableObject instance.</param>
         public static void CreateAsset(ScriptableObject scriptableObject)
         {
-            string resourcesParentDirectory = GetModToolDirectory();
-            string resourcesDirectory = "";
+            var resourcesParentDirectory = GetModToolDirectory();
+            var resourcesDirectory = "";
 
-            resourcesDirectory = Directory.GetDirectories(resourcesParentDirectory, "Resources", SearchOption.AllDirectories).FirstOrDefault();
+            resourcesDirectory = Directory
+                .GetDirectories(resourcesParentDirectory, "Resources", SearchOption.AllDirectories).FirstOrDefault();
 
             if (string.IsNullOrEmpty(resourcesDirectory))
             {
@@ -120,9 +122,9 @@ namespace MultiMod.Editor
                 Directory.CreateDirectory(resourcesDirectory);
             }
 
-            string path = Path.Combine(resourcesDirectory, scriptableObject.GetType().Name + ".asset");
+            var path = Path.Combine(resourcesDirectory, scriptableObject.GetType().Name + ".asset");
 
             AssetDatabase.CreateAsset(scriptableObject, path);
-        }        
+        }
     }
 }

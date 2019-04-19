@@ -1,17 +1,17 @@
-﻿using MultiMod.Shared;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using MultiMod.Shared;
 using UnityEditor;
 
 namespace MultiMod.Editor
 {
     /// <summary>
-    /// Extension methods for ModPlatform.
+    ///     Extension methods for ModPlatform.
     /// </summary>
     public static class EditorModPlatformExtensions
     {
         /// <summary>
-        /// Does this ModPlatform include the equivalent BuildTarget?
+        ///     Does this ModPlatform include the equivalent BuildTarget?
         /// </summary>
         /// <param name="self">A ModPlatform instance.</param>
         /// <param name="buildTarget">The BuildTarget to check.</param>
@@ -21,19 +21,19 @@ namespace MultiMod.Editor
             switch (buildTarget)
             {
                 case BuildTarget.StandaloneWindows:
-                    if (( self & ModPlatform.Windows ) == ModPlatform.Windows)
+                    if ((self & ModPlatform.Windows) == ModPlatform.Windows)
                         return true;
                     break;
                 case BuildTarget.StandaloneLinuxUniversal:
-                    if (( self & ModPlatform.Linux ) == ModPlatform.Linux)
+                    if ((self & ModPlatform.Linux) == ModPlatform.Linux)
                         return true;
                     break;
                 case BuildTarget.StandaloneOSX:
-                    if (( self & ModPlatform.OSX ) == ModPlatform.OSX)
+                    if ((self & ModPlatform.OSX) == ModPlatform.OSX)
                         return true;
                     break;
                 case BuildTarget.Android:
-                    if (( self & ModPlatform.Android ) == ModPlatform.Android)
+                    if ((self & ModPlatform.Android) == ModPlatform.Android)
                         return true;
                     break;
             }
@@ -42,7 +42,7 @@ namespace MultiMod.Editor
         }
 
         /// <summary>
-        /// Get the ModPlatform equivalent to this BuildTarget
+        ///     Get the ModPlatform equivalent to this BuildTarget
         /// </summary>
         /// <param name="self">A BuildTarget instance.</param>
         /// <returns>The equivalent ModPlatform.</returns>
@@ -64,21 +64,19 @@ namespace MultiMod.Editor
         }
 
         /// <summary>
-        /// Get a list of BuildTargets that are equivalent to this ModPlatform.
+        ///     Get a list of BuildTargets that are equivalent to this ModPlatform.
         /// </summary>
         /// <param name="self">A ModPlatform Instance.</param>
         /// <returns>A list with equivalent BuildTargets</returns>
         public static List<BuildTarget> GetBuildTargets(this ModPlatform self)
         {
-            List<BuildTarget> runtimePlatforms = new List<BuildTarget>();
+            var runtimePlatforms = new List<BuildTarget>();
 
             var values = Enum.GetValues(typeof(BuildTarget));
 
             foreach (BuildTarget r in values)
-            {
                 if (self.HasBuildTarget(r))
                     runtimePlatforms.Add(r);
-            }
 
             return runtimePlatforms;
         }

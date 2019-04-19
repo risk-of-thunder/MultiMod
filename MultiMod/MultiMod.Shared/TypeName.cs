@@ -3,23 +3,23 @@
 namespace MultiMod.Shared
 {
     /// <summary>
-    /// Represents a Type's name.
+    ///     Represents a Type's name.
     /// </summary>
     [Serializable]
     public class TypeName
     {
         /// <summary>
-        /// The Type's namespace.
-        /// </summary>
-        public string nameSpace = "";
-
-        /// <summary>
-        /// The Type's name.
+        ///     The Type's name.
         /// </summary>
         public string name = "";
 
         /// <summary>
-        /// Initialize a new TypeName.
+        ///     The Type's namespace.
+        /// </summary>
+        public string nameSpace = "";
+
+        /// <summary>
+        ///     Initialize a new TypeName.
         /// </summary>
         /// <param name="nameSpace">The Type's namespace.</param>
         /// <param name="name">The Type's name.</param>
@@ -27,11 +27,10 @@ namespace MultiMod.Shared
         {
             this.nameSpace = nameSpace;
             this.name = name;
-        }        
+        }
 
         public TypeName()
         {
-
         }
     }
 }

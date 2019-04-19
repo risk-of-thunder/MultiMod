@@ -5,27 +5,32 @@ using Mono.Cecil;
 using MultiMod.Shared;
 
 namespace MultiMod.Cecil
-{ 
+{
     /// <summary>
-    /// Filter mode for finding Assemblies.
+    ///     Filter mode for finding Assemblies.
     /// </summary>
     [Flags]
-    public enum AssemblyFilter { ApiAssemblies = 1, ModToolAssemblies = 2, ModAssemblies = 4 }
+    public enum AssemblyFilter
+    {
+        ApiAssemblies = 1,
+        ModToolAssemblies = 2,
+        ModAssemblies = 4
+    }
 
 
     /// <summary>
-    /// Utility for finding Assemblies.
+    ///     Utility for finding Assemblies.
     /// </summary>
     public class AssemblyUtility
     {
         /// <summary>
-        /// Find dll files in a directory and its sub directories.
+        ///     Find dll files in a directory and its sub directories.
         /// </summary>
         /// <param name="path">The directory to search in.</param>
         /// <returns>A List of paths to found Assemblies.</returns>
         public static List<string> GetAssemblies(string path, AssemblyFilter assemblyFilter)
         {
-            List<string> assemblies = new List<string>();
+            var assemblies = new List<string>();
 
             GetAssemblies(assemblies, path, assemblyFilter);
 
@@ -42,7 +47,7 @@ namespace MultiMod.Cecil
 
                 try
                 {
-                    assemblyDefinition = Mono.Cecil.AssemblyDefinition.ReadAssembly(assembly);
+                    assemblyDefinition = AssemblyDefinition.ReadAssembly(assembly);
                 }
                 catch
                 {
@@ -50,7 +55,7 @@ namespace MultiMod.Cecil
                     continue;
                 }
 
-                string name = assemblyDefinition.Name.Name;
+                var name = assemblyDefinition.Name.Name;
 
                 assemblyDefinition.Dispose();
 
@@ -64,10 +69,10 @@ namespace MultiMod.Cecil
 
                     continue;
                 }
-                
-                if(name.Contains("Mono.Cecil"))
+
+                if (name.Contains("Mono.Cecil"))
                 {
-                    if((assemblyFilter & AssemblyFilter.ModToolAssemblies) != 0)
+                    if ((assemblyFilter & AssemblyFilter.ModToolAssemblies) != 0)
                     {
                         LogUtility.LogDebug($"Adding assembly: {name}");
                         assemblies.Add(assembly);
@@ -93,6 +98,6 @@ namespace MultiMod.Cecil
                     assemblies.Add(assembly);
                 }
             }
-        }                 
-    }    
+        }
+    }
 }

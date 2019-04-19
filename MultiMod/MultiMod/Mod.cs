@@ -10,127 +10,31 @@ using MultiMod.Interface;
 using MultiMod.Shared;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Object = UnityEngine.Object;
 
 namespace MultiMod
 {
     /// <summary>
-    /// Class that represents a Mod. 
-    /// A Mod lets you load scenes, prefabs and Assemblies that have been exported with the game's generated ModTools.
+    ///     Class that represents a Mod.
+    ///     A Mod lets you load scenes, prefabs and Assemblies that have been exported with the game's generated ModTools.
     /// </summary>
     public class Mod : Resource
     {
-        /// <summary>
-        /// Occurs when a ModScene has been loaded
-        /// </summary>
-        public event Action<ModScene> SceneLoaded;
-        /// <summary>
-        /// Occurs when a ModScene has been unloaded
-        /// </summary>
-        public event Action<ModScene> SceneUnloaded;
-        /// <summary>
-        /// Occurs when a ModScene has cancelled async loading.
-        /// </summary>
-        public event Action<ModScene> SceneLoadCancelled;
-
-        /// <summary>
-        /// Collection of names of Assemblies included in this Mod.
-        /// </summary>
-        public ReadOnlyCollection<string> assemblyNames { get; private set; }
-
-        /// <summary>
-        /// Collection of Mods that are in conflict with this Mod.
-        /// </summary>
-        public ReadOnlyCollection<Mod> conflictingMods { get; private set; }
-
-        /// <summary>
-        /// Collection of names of Scenes included in this Mod.
-        /// </summary>
-        public ReadOnlyCollection<string> sceneNames { get; private set; }
-
-        /// <summary>
-        /// Collection of paths of assets included in this Mod.
-        /// </summary>
-        public ReadOnlyCollection<string> assetPaths { get; private set; }
-
-        /// <summary>
-        /// Collection of ModScenes included in this Mod.
-        /// </summary>
-        public ReadOnlyCollection<ModScene> scenes { get; private set; }
-
-        /// <summary>
-        /// Collection of loaded prefabs included in this Mod. Only available when the mod is loaded.
-        /// </summary>
-        public ReadOnlyCollection<GameObject> prefabs { get; private set; }
-
-        /// <summary>
-        /// This mod's ModInfo.
-        /// </summary>
-        public ModInfo modInfo { get; private set; }
-
-        /// <summary>
-        /// Types of content included in this Mod.
-        /// </summary>
-        public ModContent contentType { get; private set; }
-
-        /// <summary>
-        /// Is this Mod or any of its resources currently busy loading?
-        /// </summary>
-        public override bool isBusy {
-            get {
-                return base.isBusy || _scenes.Any(s => s.isBusy);
-            }
-        }
-
-        /// <summary>
-        /// Can this mod be loaded? False if a conflicting mod is loaded, if the mod is not enabled or if the mod is not valid
-        /// </summary>
-        public override bool canLoad {
-            get {
-                CheckResources();
-                return !ConflictingModsLoaded() && isValid;
-            }
-        }
-
-        /// <summary>
-        /// Set the mod to be enabled or disabled
-        /// </summary>
-        public bool isEnabled {
-            get {
-                return modInfo.isEnabled;
-            }
-            set {
-                modInfo.isEnabled = value;
-                modInfo.Save();
-            }
-        }
-
-        /// <summary>
-        /// Is the mod valid? A Mod becomes invalid when it is no longer being managed by the ModManager,
-        /// when any of its resources is missing or can't be loaded.
-        /// </summary>
-        public bool isValid { get; private set; }
-
-        /// <summary>
-        /// The Mod's ContentHandler. Use for instantiating Objects and adding Components that have to be initialized for this mod, 
-        /// or cleaned up after the mod is unloaded.
-        /// </summary>
-        public ContentHandler contentHandler { get; private set; }
-
-        private List<string> assemblyFiles;
-
-        private AssetBundleResource assetsResource;
-        private AssetBundleResource scenesResource;
-        private List<Assembly> assemblies;
-
         private List<string> _assemblyNames;
         private List<Mod> _conflictingMods;
-        private List<ModScene> _scenes;
         private List<GameObject> _prefabs;
+        private List<ModScene> _scenes;
 
         private Dictionary<Type, object> allInstances;
+        private List<Assembly> assemblies;
+
+        private readonly List<string> assemblyFiles;
+
+        private readonly AssetBundleResource assetsResource;
+        private readonly AssetBundleResource scenesResource;
 
         /// <summary>
-        /// Initialize a new Mod with a path to a mod file.
+        ///     Initialize a new Mod with a path to a mod file.
         /// </summary>
         /// <param name="path">The path to a mod file</param>
         public Mod(string path) : base(Path.GetFileNameWithoutExtension(path))
@@ -139,11 +43,11 @@ namespace MultiMod
 
             contentType = modInfo.content;
 
-            string modDirectory = Path.GetDirectoryName(path);
-            string platformDirectory = Path.Combine(modDirectory, Application.platform.GetModPlatform().ToString());
+            var modDirectory = Path.GetDirectoryName(path);
+            var platformDirectory = Path.Combine(modDirectory, Application.platform.GetModPlatform().ToString());
 
-            string assets = Path.Combine(platformDirectory, modInfo.name.ToLower() + ".assets");
-            string scenes = Path.Combine(platformDirectory, modInfo.name.ToLower() + ".scenes");
+            var assets = Path.Combine(platformDirectory, modInfo.name.ToLower() + ".assets");
+            var scenes = Path.Combine(platformDirectory, modInfo.name.ToLower() + ".scenes");
 
             assemblyFiles = AssemblyUtility.GetAssemblies(modDirectory, AssemblyFilter.ModAssemblies);
             assetsResource = new AssetBundleResource(name + " assets", assets);
@@ -157,6 +61,107 @@ namespace MultiMod
 
             CheckResources();
         }
+
+        /// <summary>
+        ///     Collection of names of Assemblies included in this Mod.
+        /// </summary>
+        public ReadOnlyCollection<string> assemblyNames { get; private set; }
+
+        /// <summary>
+        ///     Collection of Mods that are in conflict with this Mod.
+        /// </summary>
+        public ReadOnlyCollection<Mod> conflictingMods { get; private set; }
+
+        /// <summary>
+        ///     Collection of names of Scenes included in this Mod.
+        /// </summary>
+        public ReadOnlyCollection<string> sceneNames { get; private set; }
+
+        /// <summary>
+        ///     Collection of paths of assets included in this Mod.
+        /// </summary>
+        public ReadOnlyCollection<string> assetPaths { get; private set; }
+
+        /// <summary>
+        ///     Collection of ModScenes included in this Mod.
+        /// </summary>
+        public ReadOnlyCollection<ModScene> scenes { get; private set; }
+
+        /// <summary>
+        ///     Collection of loaded prefabs included in this Mod. Only available when the mod is loaded.
+        /// </summary>
+        public ReadOnlyCollection<GameObject> prefabs { get; private set; }
+
+        /// <summary>
+        ///     This mod's ModInfo.
+        /// </summary>
+        public ModInfo modInfo { get; }
+
+        /// <summary>
+        ///     Types of content included in this Mod.
+        /// </summary>
+        public ModContent contentType { get; }
+
+        /// <summary>
+        ///     Is this Mod or any of its resources currently busy loading?
+        /// </summary>
+        public override bool isBusy
+        {
+            get { return base.isBusy || _scenes.Any(s => s.isBusy); }
+        }
+
+        /// <summary>
+        ///     Can this mod be loaded? False if a conflicting mod is loaded, if the mod is not enabled or if the mod is not valid
+        /// </summary>
+        public override bool canLoad
+        {
+            get
+            {
+                CheckResources();
+                return !ConflictingModsLoaded() && isValid;
+            }
+        }
+
+        /// <summary>
+        ///     Set the mod to be enabled or disabled
+        /// </summary>
+        public bool isEnabled
+        {
+            get => modInfo.isEnabled;
+            set
+            {
+                modInfo.isEnabled = value;
+                modInfo.Save();
+            }
+        }
+
+        /// <summary>
+        ///     Is the mod valid? A Mod becomes invalid when it is no longer being managed by the ModManager,
+        ///     when any of its resources is missing or can't be loaded.
+        /// </summary>
+        public bool isValid { get; private set; }
+
+        /// <summary>
+        ///     The Mod's ContentHandler. Use for instantiating Objects and adding Components that have to be initialized for this
+        ///     mod,
+        ///     or cleaned up after the mod is unloaded.
+        /// </summary>
+        public ContentHandler contentHandler { get; private set; }
+
+        /// <summary>
+        ///     Occurs when a ModScene has been loaded
+        /// </summary>
+        public event Action<ModScene> SceneLoaded;
+
+        /// <summary>
+        ///     Occurs when a ModScene has been unloaded
+        /// </summary>
+        public event Action<ModScene> SceneUnloaded;
+
+        /// <summary>
+        ///     Occurs when a ModScene has cancelled async loading.
+        /// </summary>
+        public event Action<ModScene> SceneLoadCancelled;
 
         private void Initialize()
         {
@@ -178,9 +183,9 @@ namespace MultiMod
             assetsResource.Loaded += OnAssetsResourceLoaded;
             scenesResource.Loaded += OnScenesResourceLoaded;
 
-            foreach (string sceneName in sceneNames)
+            foreach (var sceneName in sceneNames)
             {
-                ModScene modScene = new ModScene(sceneName, this);
+                var modScene = new ModScene(sceneName, this);
 
                 modScene.Loaded += OnSceneLoaded;
                 modScene.Unloaded += OnSceneUnloaded;
@@ -189,7 +194,7 @@ namespace MultiMod
                 _scenes.Add(modScene);
             }
 
-            foreach (string assembly in assemblyFiles)
+            foreach (var assembly in assemblyFiles)
                 _assemblyNames.Add(Path.GetFileName(assembly));
 
             contentHandler = new ContentHandler(this, _scenes.Cast<IResource>().ToList().AsReadOnly(), prefabs);
@@ -206,32 +211,30 @@ namespace MultiMod
                 return;
             }
 
-            if (( contentType & ModContent.Assets ) == ModContent.Assets && !assetsResource.canLoad)
+            if ((contentType & ModContent.Assets) == ModContent.Assets && !assetsResource.canLoad)
             {
                 isValid = false;
                 Debug.Log("Assets assetbundle missing for Mod: " + name);
             }
 
-            if (( contentType & ModContent.Scenes ) == ModContent.Scenes && !scenesResource.canLoad)
+            if ((contentType & ModContent.Scenes) == ModContent.Scenes && !scenesResource.canLoad)
             {
                 isValid = false;
                 Debug.Log("Scenes assetbundle missing for Mod: " + name);
             }
 
-            if (( contentType & ModContent.Code ) == ModContent.Code && assemblyFiles.Count == 0)
+            if ((contentType & ModContent.Code) == ModContent.Code && assemblyFiles.Count == 0)
             {
                 isValid = false;
                 Debug.Log("Assemblies missing for Mod: " + name);
             }
 
-            foreach (string path in assemblyFiles)
-            {
+            foreach (var path in assemblyFiles)
                 if (!File.Exists(path))
                 {
                     isValid = false;
                     Debug.Log(path + " missing for Mod: " + name);
                 }
-            }
         }
 
         private void VerifyAssemblies()
@@ -245,17 +248,18 @@ namespace MultiMod
 
         private void LoadAssemblies()
         {
-            foreach (string path in assemblyFiles)
+            foreach (var path in assemblyFiles)
             {
                 if (!File.Exists(path))
                     continue;
 
                 try
                 {
-                    Assembly assembly = Assembly.Load(File.ReadAllBytes(path));
+                    var assembly = Assembly.Load(File.ReadAllBytes(path));
                     assembly.GetTypes();
                     assemblies.Add(assembly);
-                } catch (Exception e)
+                }
+                catch (Exception e)
                 {
                     LogUtility.LogException(e);
                     SetInvalid();
@@ -271,9 +275,10 @@ namespace MultiMod
                 if (assetsResource.assetBundle == null)
                     throw new Exception("Could not load assets.");
 
-                GameObject[] prefabs = assetsResource.assetBundle.LoadAllAssets<GameObject>();
+                var prefabs = assetsResource.assetBundle.LoadAllAssets<GameObject>();
                 _prefabs.AddRange(prefabs);
-            } catch (Exception e)
+            }
+            catch (Exception e)
             {
                 LogUtility.LogException(e);
                 SetInvalid();
@@ -324,11 +329,11 @@ namespace MultiMod
 
             var loadingResources = resources.Where(r => r.canLoad);
 
-            int count = loadingResources.Count();
+            var count = loadingResources.Count();
 
             while (true)
             {
-                bool isDone = true;
+                var isDone = true;
                 float progress = 0;
 
                 foreach (var resource in loadingResources)
@@ -352,10 +357,7 @@ namespace MultiMod
 
             _scenes.ForEach(s => s.Unload());
 
-            foreach (IModHandler loader in GetInstances<IModHandler>())
-            {
-                loader.OnUnloaded();
-            }
+            foreach (var loader in GetInstances<IModHandler>()) loader.OnUnloaded();
         }
 
         protected override void UnloadResources()
@@ -375,12 +377,12 @@ namespace MultiMod
 
         private void OnSceneLoaded(Resource scene)
         {
-            SceneLoaded?.Invoke((ModScene)scene);
+            SceneLoaded?.Invoke((ModScene) scene);
         }
 
         private void OnSceneLoadCancelled(Resource scene)
         {
-            SceneLoadCancelled?.Invoke((ModScene)scene);
+            SceneLoadCancelled?.Invoke((ModScene) scene);
 
             if (!_scenes.Any(s => s.isBusy))
                 End();
@@ -388,7 +390,7 @@ namespace MultiMod
 
         private void OnSceneUnloaded(Resource scene)
         {
-            SceneUnloaded?.Invoke((ModScene)scene);
+            SceneUnloaded?.Invoke((ModScene) scene);
 
             if (!_scenes.Any(s => s.isBusy))
                 End();
@@ -397,25 +399,23 @@ namespace MultiMod
         protected override void OnLoadResumed()
         {
             //resume scene loading
-            foreach (ModScene scene in _scenes)
-            {
+            foreach (var scene in _scenes)
                 if (scene.loadState == ResourceLoadState.Cancelling)
                     scene.Load();
-            }
 
             base.OnLoadResumed();
         }
 
         protected override void OnLoaded()
         {
-            foreach (IModHandler loader in GetInstances<IModHandler>())
+            foreach (var loader in GetInstances<IModHandler>())
                 loader.OnLoaded(contentHandler);
 
             base.OnLoaded();
         }
 
         /// <summary>
-        /// Update this Mod's conflicting Mods with the supplied Mod
+        ///     Update this Mod's conflicting Mods with the supplied Mod
         /// </summary>
         /// <param name="other">Another Mod</param>
         public void UpdateConflicts(Mod other)
@@ -431,55 +431,46 @@ namespace MultiMod
                 return;
             }
 
-            foreach (string assemblyName in _assemblyNames)
-            {
-                foreach (string otherAssemblyName in other.assemblyNames)
+            foreach (var assemblyName in _assemblyNames)
+            foreach (var otherAssemblyName in other.assemblyNames)
+                if (assemblyName == otherAssemblyName)
                 {
-                    if (assemblyName == otherAssemblyName)
-                    {
-                        Debug.Log("Assembly " + other.name + "/" + otherAssemblyName + " conflicting with " + name + "/" + assemblyName);
+                    Debug.Log("Assembly " + other.name + "/" + otherAssemblyName + " conflicting with " + name + "/" +
+                              assemblyName);
 
-                        if (!_conflictingMods.Contains(other))
-                        {
-                            _conflictingMods.Add(other);
-                            return;
-                        }
+                    if (!_conflictingMods.Contains(other))
+                    {
+                        _conflictingMods.Add(other);
+                        return;
                     }
                 }
-            }
 
-            foreach (string sceneName in sceneNames)
-            {
-                foreach (string otherSceneName in other.sceneNames)
+            foreach (var sceneName in sceneNames)
+            foreach (var otherSceneName in other.sceneNames)
+                if (sceneName == otherSceneName)
                 {
-                    if (sceneName == otherSceneName)
-                    {
-                        Debug.Log("Scene " + other.name + "/" + otherSceneName + " conflicting with " + name + "/" + sceneName);
+                    Debug.Log("Scene " + other.name + "/" + otherSceneName + " conflicting with " + name + "/" +
+                              sceneName);
 
-                        if (!_conflictingMods.Contains(other))
-                        {
-                            _conflictingMods.Add(other);
-                            return;
-                        }
+                    if (!_conflictingMods.Contains(other))
+                    {
+                        _conflictingMods.Add(other);
+                        return;
                     }
                 }
-            }
         }
 
         /// <summary>
-        /// Update this Mod's conflicting Mods with the supplied Mods
+        ///     Update this Mod's conflicting Mods with the supplied Mods
         /// </summary>
         /// <param name="mods">A collection of Mods</param>
         public void UpdateConflicts(IEnumerable<Mod> mods)
         {
-            foreach (Mod mod in mods)
-            {
-                UpdateConflicts(mod);
-            }
+            foreach (var mod in mods) UpdateConflicts(mod);
         }
 
         /// <summary>
-        /// Is another conflicting Mod loaded?
+        ///     Is another conflicting Mod loaded?
         /// </summary>
         /// <returns>True if another conflicting mod is loaded</returns>
         public bool ConflictingModsLoaded()
@@ -488,7 +479,7 @@ namespace MultiMod
         }
 
         /// <summary>
-        /// Is another conflicting Mod enabled?
+        ///     Is another conflicting Mod enabled?
         /// </summary>
         /// <returns>True if another conflicting mod is enabled</returns>
         public bool ConflictingModsEnabled()
@@ -497,7 +488,7 @@ namespace MultiMod
         }
 
         /// <summary>
-        /// Invalidate the mod
+        ///     Invalidate the mod
         /// </summary>
         public void SetInvalid()
         {
@@ -505,11 +496,11 @@ namespace MultiMod
         }
 
         /// <summary>
-        /// Get an asset with name.
+        ///     Get an asset with name.
         /// </summary>
         /// <param name="name">The asset's name.</param>
         /// <returns>The asset if it has been found. Null otherwise</returns>
-        public UnityEngine.Object GetAsset(string name)
+        public Object GetAsset(string name)
         {
             if (assetsResource.loadState == ResourceLoadState.Loaded)
                 return assetsResource.assetBundle.LoadAsset(name);
@@ -518,12 +509,12 @@ namespace MultiMod
         }
 
         /// <summary>
-        /// Get an asset with name of a certain Type.
+        ///     Get an asset with name of a certain Type.
         /// </summary>
         /// <param name="name">The asset's name.</param>
         /// <typeparam name="T">The asset Type.</typeparam>
         /// <returns>The asset if it has been found. Null otherwise</returns>
-        public T GetAsset<T>(string name) where T : UnityEngine.Object
+        public T GetAsset<T>(string name) where T : Object
         {
             if (assetsResource.loadState == ResourceLoadState.Loaded)
                 return assetsResource.assetBundle.LoadAsset<T>(name);
@@ -532,11 +523,11 @@ namespace MultiMod
         }
 
         /// <summary>
-        /// Get all assets of a certain Type.
+        ///     Get all assets of a certain Type.
         /// </summary>
         /// <typeparam name="T">The asset Type.</typeparam>
         /// <returns>AssetBundleRequest that can be used to get the asset.</returns>
-        public T[] GetAssets<T>() where T : UnityEngine.Object
+        public T[] GetAssets<T>() where T : Object
         {
             if (assetsResource.loadState == ResourceLoadState.Loaded)
                 return assetsResource.assetBundle.LoadAllAssets<T>();
@@ -545,12 +536,12 @@ namespace MultiMod
         }
 
         /// <summary>
-        /// Get an asset with name of a certain Type.
+        ///     Get an asset with name of a certain Type.
         /// </summary>
         /// <param name="name">The asset's name.</param>
         /// <typeparam name="T">The asset's Type</typeparam>
         /// <returns>AssetBundleRequest that can be used to get the asset.</returns>
-        public AssetBundleRequest GetAssetAsync<T>(string name) where T : UnityEngine.Object
+        public AssetBundleRequest GetAssetAsync<T>(string name) where T : Object
         {
             if (assetsResource.loadState == ResourceLoadState.Loaded)
                 return assetsResource.assetBundle.LoadAssetAsync<T>(name);
@@ -559,11 +550,11 @@ namespace MultiMod
         }
 
         /// <summary>
-        /// Get all assets of a certain Type.
+        ///     Get all assets of a certain Type.
         /// </summary>
         /// <typeparam name="T">The asset Type.</typeparam>
         /// <returns>AssetBundleRequest that can be used to get the assets.</returns>
-        public AssetBundleRequest GetAssetsAsync<T>() where T : UnityEngine.Object
+        public AssetBundleRequest GetAssetsAsync<T>() where T : Object
         {
             if (assetsResource.loadState == ResourceLoadState.Loaded)
                 return assetsResource.assetBundle.LoadAllAssetsAsync<T>();
@@ -572,24 +563,21 @@ namespace MultiMod
         }
 
         /// <summary>
-        /// Get all Components of type T in all prefabs
+        ///     Get all Components of type T in all prefabs
         /// </summary>
         /// <typeparam name="T">The Component that will be looked for.</typeparam>
         /// <returns>An array of found Components of Type T.</returns>
         public T[] GetComponentsInPrefabs<T>()
         {
-            List<T> components = new List<T>();
+            var components = new List<T>();
 
-            foreach (GameObject prefab in prefabs)
-            {
-                components.AddRange(prefab.GetComponentsInChildren<T>());
-            }
+            foreach (var prefab in prefabs) components.AddRange(prefab.GetComponentsInChildren<T>());
 
             return components.ToArray();
         }
 
         /// <summary>
-        /// Get all Components of type T in all loaded ModScenes.
+        ///     Get all Components of type T in all loaded ModScenes.
         /// </summary>
         /// <typeparam name="T">The Component that will be looked for.</typeparam>
         /// <returns>An array of found Components of Type T.</returns>
@@ -598,50 +586,46 @@ namespace MultiMod
             if (!typeof(T).IsSubclassOf(typeof(Component)))
                 throw new ArgumentException(typeof(T).Name + " is not a component.");
 
-            List<T> components = new List<T>();
+            var components = new List<T>();
 
-            foreach (ModScene scene in _scenes)
-            {
-                components.AddRange(scene.GetComponentsInScene<T>());
-            }
+            foreach (var scene in _scenes) components.AddRange(scene.GetComponentsInScene<T>());
 
             return components.ToArray();
         }
 
         /// <summary>
-        /// Get instances of all Types included in the Mod that implement or derive from Type T.
-        /// Reuses existing instances and creates new instances for Types that have no instance yet.
-        /// Does not instantiate Components; returns all active instances of the Component instead.
+        ///     Get instances of all Types included in the Mod that implement or derive from Type T.
+        ///     Reuses existing instances and creates new instances for Types that have no instance yet.
+        ///     Does not instantiate Components; returns all active instances of the Component instead.
         /// </summary>
         /// <typeparam name="T">The Type that will be looked for</typeparam>
         /// <param name="args">Optional arguments for the Type's constructor</param>
         /// <returns>A List of Instances of Types that implement or derive from Type T</returns>
         public T[] GetInstances<T>(params object[] args)
         {
-            List<T> instances = new List<T>();
+            var instances = new List<T>();
 
             if (loadState != ResourceLoadState.Loaded)
                 return instances.ToArray();
 
-            foreach (Assembly assembly in assemblies)
-            {
+            foreach (var assembly in assemblies)
                 try
                 {
                     instances.AddRange(GetInstances<T>(assembly, args));
-                } catch (Exception e)
+                }
+                catch (Exception e)
                 {
                     LogUtility.LogException(e);
                 }
-            }
 
             return instances.ToArray();
         }
 
         private T[] GetInstances<T>(Assembly assembly, params object[] args)
         {
-            List<T> instances = new List<T>();
+            var instances = new List<T>();
 
-            foreach (Type type in assembly.GetTypes())
+            foreach (var type in assembly.GetTypes())
             {
                 if (!typeof(T).IsAssignableFrom(type))
                     continue;
@@ -656,25 +640,23 @@ namespace MultiMod
                 if (allInstances.TryGetValue(type, out foundInstance))
                 {
                     //LogUtility.Log("existing instance of " + typeof(T).Name + " found: " + type.Name);
-                    instances.Add((T)foundInstance);
+                    instances.Add((T) foundInstance);
                     continue;
                 }
 
                 if (type.IsSubclassOf(typeof(Component)))
                 {
-                    foreach (Component component in GetComponents(type))
-                    {
-                        instances.Add((T)(object)component);
-                    }
+                    foreach (var component in GetComponents(type)) instances.Add((T) (object) component);
                     continue;
                 }
 
                 try
                 {
-                    T instance = (T)Activator.CreateInstance(type, args);
+                    var instance = (T) Activator.CreateInstance(type, args);
                     instances.Add(instance);
                     allInstances.Add(type, instance);
-                } catch (Exception e)
+                }
+                catch (Exception e)
                 {
                     if (e is MissingMethodException)
                         Debug.Log(e.Message);
@@ -688,12 +670,10 @@ namespace MultiMod
 
         private static Component[] GetComponents(Type componentType)
         {
-            List<Component> components = new List<Component>();
+            var components = new List<Component>();
 
-            for (int i = 0; i < SceneManager.sceneCount; i++)
-            {
+            for (var i = 0; i < SceneManager.sceneCount; i++)
                 components.AddRange(SceneManager.GetSceneAt(i).GetComponentsInScene(componentType));
-            }
 
             return components.ToArray();
         }

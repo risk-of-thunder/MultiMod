@@ -1,35 +1,16 @@
 ﻿using System.Collections;
 using MultiMod.Interface;
-using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace MultiMod
 {
     /// <summary>
-    /// Represents a Scene that is included in a Mod.
+    ///     Represents a Scene that is included in a Mod.
     /// </summary>
     public class ModScene : Resource
     {
         /// <summary>
-        /// This ModScene's Scene.
-        /// </summary>
-        public Scene? scene { get; private set; }
-
-        /// <summary>
-        /// The Mod this scene belongs to.
-        /// </summary>
-        public Mod mod { get; private set; }
-
-        /// <summary>
-        /// Can the scene be loaded? False if this scene's Mod is not loaded.
-        /// </summary>
-        public override bool canLoad
-        {
-            get { return mod.loadState == ResourceLoadState.Loaded; }
-        }
-
-        /// <summary>
-        /// Initialize a new ModScene with a Scene name and a Mod
+        ///     Initialize a new ModScene with a Scene name and a Mod
         /// </summary>
         /// <param name="name">The scene's name</param>
         /// <param name="mod">The Mod this ModScene belongs to.</param>
@@ -38,16 +19,31 @@ namespace MultiMod
             this.mod = mod;
             scene = null;
         }
-                  
+
+        /// <summary>
+        ///     This ModScene's Scene.
+        /// </summary>
+        public Scene? scene { get; private set; }
+
+        /// <summary>
+        ///     The Mod this scene belongs to.
+        /// </summary>
+        public Mod mod { get; }
+
+        /// <summary>
+        ///     Can the scene be loaded? False if this scene's Mod is not loaded.
+        /// </summary>
+        public override bool canLoad => mod.loadState == ResourceLoadState.Loaded;
+
         protected override IEnumerator LoadResources()
         {
             //NOTE: Loading a scene synchronously prevents the scene from being initialized, so force async loading.
-            yield return LoadResourcesAsync();            
+            yield return LoadResourcesAsync();
         }
-                
+
         protected override IEnumerator LoadResourcesAsync()
         {
-            AsyncOperation loadOperation = SceneManager.LoadSceneAsync(name, LoadSceneMode.Additive);
+            var loadOperation = SceneManager.LoadSceneAsync(name, LoadSceneMode.Additive);
             loadOperation.allowSceneActivation = false;
 
             while (loadOperation.progress < .9f)
@@ -59,12 +55,12 @@ namespace MultiMod
             loadOperation.allowSceneActivation = true;
 
             yield return loadOperation;
-            
+
             scene = SceneManager.GetSceneByName(name);
-                        
+
             SetActive();
         }
-        
+
         protected override void UnloadResources()
         {
             if (scene.HasValue)
@@ -74,7 +70,7 @@ namespace MultiMod
         }
 
         /// <summary>
-        /// Set this ModScene's Scene as the active scene.
+        ///     Set this ModScene's Scene as the active scene.
         /// </summary>
         public void SetActive()
         {
@@ -83,15 +79,15 @@ namespace MultiMod
         }
 
         protected override void OnLoaded()
-        {           
-            foreach (IModHandler modHandler in GetComponentsInScene<IModHandler>())
+        {
+            foreach (var modHandler in GetComponentsInScene<IModHandler>())
                 modHandler.OnLoaded(mod.contentHandler);
 
             base.OnLoaded();
         }
 
         /// <summary>
-        /// Returns the first Component of type T in this Scene.
+        ///     Returns the first Component of type T in this Scene.
         /// </summary>
         /// <typeparam name="T">The Component that will be looked for.</typeparam>
         /// <returns>An array of found Components of Type T.</returns>
@@ -104,7 +100,7 @@ namespace MultiMod
         }
 
         /// <summary>
-        /// Returns all Components of type T in this Scene.
+        ///     Returns all Components of type T in this Scene.
         /// </summary>
         /// <typeparam name="T">The Component that will be looked for.</typeparam>
         /// <returns>An array of found Components of Type T.</returns>
@@ -114,6 +110,6 @@ namespace MultiMod
                 return new T[0];
 
             return scene.Value.GetComponentsInScene<T>();
-        }        
+        }
     }
 }

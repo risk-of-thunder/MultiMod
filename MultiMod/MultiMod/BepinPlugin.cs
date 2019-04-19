@@ -1,6 +1,7 @@
 ﻿using BepInEx;
-using MultiMod.Shared;
+using On.RoR2;
 using UnityEngine;
+using Path = System.IO.Path;
 
 namespace MultiMod
 {
@@ -23,9 +24,9 @@ namespace MultiMod
         //The Awake() method is run at the very start when the game is initialized.
         public void Awake()
         {
-            On.RoR2.RoR2Application.UnitySystemConsoleRedirector.Redirect += orig => { };
+            RoR2Application.UnitySystemConsoleRedirector.Redirect += orig => { };
 
-            var searchDirectory = System.IO.Path.Combine(BepInEx.Paths.PluginPath, "multimod/mods");
+            var searchDirectory = Path.Combine(Paths.PluginPath, "multimod/mods");
             var mm = ModManager.instance;
             mm.AddSearchDirectory(searchDirectory);
             mm.RefreshSearchDirectories();
@@ -35,32 +36,29 @@ namespace MultiMod
             {
                 Debug.Log("Mods changed.");
                 foreach (var mod in mm.mods)
-                {
-                    Debug.Log($"{mod.name}: {mod.assemblyNames.Count} assemblies, {mod.contentHandler.prefabs.Count} prefabs, isValid={mod.isValid}, state {mod.loadState}");
-                }
+                    Debug.Log(
+                        $"{mod.name}: {mod.assemblyNames.Count} assemblies, {mod.contentHandler.prefabs.Count} prefabs, isValid={mod.isValid}, state {mod.loadState}");
             };
 
             mm.ModFound += mod =>
             {
-                Debug.Log($"Mod found: {mod.name} {mod.assemblyNames.Count} assemblies, {mod.contentHandler.prefabs.Count} prefabs, isValid={mod.isValid}, state {mod.loadState}");
+                Debug.Log(
+                    $"Mod found: {mod.name} {mod.assemblyNames.Count} assemblies, {mod.contentHandler.prefabs.Count} prefabs, isValid={mod.isValid}, state {mod.loadState}");
 
-                foreach (var assetPath in mod.assetPaths)
-                {
-                    Debug.Log($" - {assetPath}");
-                }
+                foreach (var assetPath in mod.assetPaths) Debug.Log($" - {assetPath}");
 
                 mod.Load();
 
                 mod.Loaded += resource => { Debug.Log($"Resource loaded? {resource.loadState} - {resource.name}"); };
 
-                Debug.Log($"Mod loaded?: {mod.name} {mod.assemblyNames.Count} assemblies, {mod.contentHandler.prefabs.Count} prefabs, isValid={mod.isValid}, state {mod.loadState}");
+                Debug.Log(
+                    $"Mod loaded?: {mod.name} {mod.assemblyNames.Count} assemblies, {mod.contentHandler.prefabs.Count} prefabs, isValid={mod.isValid}, state {mod.loadState}");
             };
 
             mm.ModLoaded += mod =>
             {
                 Debug.Log($"{mod.name} loaded. Looking for main prefab.");
                 foreach (var prefab in mod.contentHandler.prefabs)
-                {
                     if (prefab.name == mod.name)
                     {
                         Debug.Log($"Main {mod.name} prefab found. Instantiating.");
@@ -69,23 +67,16 @@ namespace MultiMod
                         var component_type = component.GetType();
                         var property = component_type.GetProperty("Content");
                         property.SetValue(component, mod.contentHandler, null);
-                    } else
+                    }
+                    else
                     {
                         Debug.Log($"{mod.name} != {prefab.name}");
                     }
-                }
-
             };
 
-            mm.ModLoadCancelled += mod =>
-            {
-                Debug.LogWarning($"Mod loading canceled: {mod.name}");
-            };
+            mm.ModLoadCancelled += mod => { Debug.LogWarning($"Mod loading canceled: {mod.name}"); };
 
-            mm.ModUnloaded += mod =>
-            {
-                Debug.Log($"Mod UNLOADED: {mod.name}");
-            };
+            mm.ModUnloaded += mod => { Debug.Log($"Mod UNLOADED: {mod.name}"); };
         }
     }
 }

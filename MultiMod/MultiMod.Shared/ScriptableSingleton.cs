@@ -6,17 +6,6 @@ namespace MultiMod.Shared
 {
     public abstract class ScriptableSingleton<T> : ScriptableObject where T : ScriptableSingleton<T>
     {
-        public static T instance
-        {
-            get
-            {
-                if (_instance == null)
-                    GetInstance();
-                
-                return _instance;
-            }
-        }
-
         private static T _instance;
 
         protected ScriptableSingleton()
@@ -25,7 +14,18 @@ namespace MultiMod.Shared
                 _instance = this as T;
         }
 
-        void OnEnable()
+        public static T instance
+        {
+            get
+            {
+                if (_instance == null)
+                    GetInstance();
+
+                return _instance;
+            }
+        }
+
+        private void OnEnable()
         {
             if (_instance == null)
                 _instance = this as T;
@@ -39,18 +39,18 @@ namespace MultiMod.Shared
             if (_instance == null)
             {
                 _instance = CreateInstance<T>();
-                
+
                 if (Application.isEditor)
                     CreateAsset();
             }
         }
-        
+
         private static void CreateAsset()
         {
-            Type type = Type.GetType("MultiMod.Shared.AssetUtility, MultiMod.Shared");
-            MethodInfo method = type.GetMethod("CreateAsset", BindingFlags.Public | BindingFlags.Static);
+            var type = Type.GetType("MultiMod.Shared.AssetUtility, MultiMod.Shared");
+            var method = type.GetMethod("CreateAsset", BindingFlags.Public | BindingFlags.Static);
 
-            method.Invoke(null, new object[] { _instance });
+            method.Invoke(null, new object[] {_instance});
         }
     }
 }

@@ -11,24 +11,24 @@ namespace MultiMod.Editor
         [MenuItem("MultiMod/Export Mod")]
         public static void ShowWindow()
         {
-            ExporterEditorWindow window = GetWindow<ExporterEditorWindow>();
+            var window = GetWindow<ExporterEditorWindow>();
             window.maxSize = new Vector2(385f, 265);
             window.minSize = new Vector2(300f, 265);
             window.titleContent = new GUIContent("MultiMod Exporter");
         }
 
-        void OnEnable()
+        private void OnEnable()
         {
             exportSettings = ExportSettings.instance;
             exportSettingsEditor = UnityEditor.Editor.CreateEditor(exportSettings);
         }
 
-        void OnDisable()
+        private void OnDisable()
         {
             DestroyImmediate(exportSettingsEditor);
         }
 
-        void OnGUI()
+        private void OnGUI()
         {
             GUI.enabled = !EditorApplication.isCompiling && !Application.isPlaying;
 
@@ -36,7 +36,7 @@ namespace MultiMod.Editor
 
             GUILayout.FlexibleSpace();
 
-            bool buttonPressed = GUILayout.Button("Export", GUILayout.Height(30));
+            var buttonPressed = GUILayout.Button("Export", GUILayout.Height(30));
 
             if (buttonPressed)
                 Export.ExportMod(exportSettings);

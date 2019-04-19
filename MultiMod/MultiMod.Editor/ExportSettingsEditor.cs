@@ -7,13 +7,13 @@ namespace MultiMod.Editor
     [CustomEditor(typeof(ExportSettings))]
     public class ExportSettingsEditor : UnityEditor.Editor
     {
-        private SerializedProperty _name;
         private SerializedProperty _author;
         private SerializedProperty _description;
-        private SerializedProperty _version;
+        private SerializedProperty _name;
         private SerializedProperty _outputDirectory;
+        private SerializedProperty _version;
 
-        void OnEnable()
+        private void OnEnable()
         {
             _name = serializedObject.FindProperty("_name");
             _author = serializedObject.FindProperty("_author");
@@ -38,9 +38,9 @@ namespace MultiMod.Editor
 
             GUILayout.Space(5);
 
-            LogUtility.logLevel = (LogLevel)EditorGUILayout.EnumPopup("Log Level:", LogUtility.logLevel);
+            LogUtility.logLevel = (LogLevel) EditorGUILayout.EnumPopup("Log Level:", LogUtility.logLevel);
 
-            bool enabled = GUI.enabled;
+            var enabled = GUI.enabled;
 
             GUILayout.BeginHorizontal();
 
@@ -52,7 +52,8 @@ namespace MultiMod.Editor
 
             if (GUILayout.Button("...", GUILayout.Width(30)))
             {
-                string selectedDirectory = EditorUtility.SaveFolderPanel("Choose output directory", _outputDirectory.stringValue, "");
+                var selectedDirectory =
+                    EditorUtility.SaveFolderPanel("Choose output directory", _outputDirectory.stringValue, "");
                 if (!string.IsNullOrEmpty(selectedDirectory))
                     _outputDirectory.stringValue = selectedDirectory;
 
@@ -70,9 +71,9 @@ namespace MultiMod.Editor
 
         private string GetShortString(string str)
         {
-            int maxWidth = (int)EditorGUIUtility.currentViewWidth - 252;
-            int cutoffIndex = Mathf.Max(0, str.Length - 7 - (maxWidth / 7));
-            string shortString = str.Substring(cutoffIndex);
+            var maxWidth = (int) EditorGUIUtility.currentViewWidth - 252;
+            var cutoffIndex = Mathf.Max(0, str.Length - 7 - maxWidth / 7);
+            var shortString = str.Substring(cutoffIndex);
             if (cutoffIndex > 0)
                 shortString = "..." + shortString;
             return shortString;

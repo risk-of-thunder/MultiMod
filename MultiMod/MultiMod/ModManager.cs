@@ -9,66 +9,36 @@ using MultiMod.Shared;
 using UnityEngine;
 
 namespace MultiMod
-{   
-    /// <summary> 
-    /// Main class for finding mods
+{
+    /// <summary>
+    ///     Main class for finding mods
     /// </summary>
     public class ModManager : UnitySingleton<ModManager>
     {
-        private object _lock = new object();
+        private readonly object _lock = new object();
+
+        private Dictionary<string, Mod> _modPaths;
+        private List<Mod> _mods;
+        private int _refreshInterval;
+
+        private Dispatcher dispatcher;
+        private List<Mod> queuedRefreshMods;
+
+        private List<ModSearchDirectory> searchDirectories;
+        private WaitForSeconds wait;
 
         /// <summary>
-        /// Occurs when the collection of Mods has changed.
-        /// </summary>
-        public event Action ModsChanged;
-        /// <summary>
-        /// Occurs when a Mod has been found.
-        /// </summary>
-        public event Action<Mod> ModFound;
-        /// <summary>
-        /// Occurs when a Mod has been removed. The Mod will be marked invalid.
-        /// </summary>
-        public event Action<Mod> ModRemoved;
-        /// <summary>
-        /// Occurs when a Mod has been loaded
-        /// </summary>
-        public event Action<Mod> ModLoaded;
-        /// <summary>
-        /// Occurs when a Mod has been Unloaded
-        /// </summary>
-        public event Action<Mod> ModUnloaded;
-        /// <summary>
-        /// Occurs when a Mod has cancelled async loading
-        /// </summary>
-        public event Action<Mod> ModLoadCancelled;
-        /// <summary>
-        /// Occurs when a ModScene has been loaded
-        /// </summary>
-        public event Action<ModScene> SceneLoaded;
-        /// <summary>
-        /// Occurs when a ModScene has been unloaded
-        /// </summary>
-        public event Action<ModScene> SceneUnloaded;
-        /// <summary>
-        /// Occurs when a ModScene has cancelled async loading
-        /// </summary>
-        public event Action<ModScene> SceneLoadCancelled;
-
-        /// <summary>
-        /// Default directory that will be searched for mods.
+        ///     Default directory that will be searched for mods.
         /// </summary>
         public string defaultSearchDirectory { get; private set; }
 
         /// <summary>
-        /// The interval (in seconds) between refreshing Mod search directories. 
-        /// Set to 0 to disable auto refreshing.
+        ///     The interval (in seconds) between refreshing Mod search directories.
+        ///     Set to 0 to disable auto refreshing.
         /// </summary>
         public int refreshInterval
         {
-            get
-            {
-                return _refreshInterval;
-            }
+            get => _refreshInterval;
             set
             {
                 _refreshInterval = value;
@@ -84,20 +54,55 @@ namespace MultiMod
         }
 
         /// <summary>
-        /// All mods that have been found in all search directories.
+        ///     All mods that have been found in all search directories.
         /// </summary>
         public ReadOnlyCollection<Mod> mods { get; private set; }
 
-        private Dispatcher dispatcher;
+        /// <summary>
+        ///     Occurs when the collection of Mods has changed.
+        /// </summary>
+        public event Action ModsChanged;
 
-        private Dictionary<string, Mod> _modPaths;
-        private List<Mod> _mods;
-        private List<Mod> queuedRefreshMods;
-        
-        private List<ModSearchDirectory> searchDirectories;
-        private int _refreshInterval;
-        private WaitForSeconds wait;
-        
+        /// <summary>
+        ///     Occurs when a Mod has been found.
+        /// </summary>
+        public event Action<Mod> ModFound;
+
+        /// <summary>
+        ///     Occurs when a Mod has been removed. The Mod will be marked invalid.
+        /// </summary>
+        public event Action<Mod> ModRemoved;
+
+        /// <summary>
+        ///     Occurs when a Mod has been loaded
+        /// </summary>
+        public event Action<Mod> ModLoaded;
+
+        /// <summary>
+        ///     Occurs when a Mod has been Unloaded
+        /// </summary>
+        public event Action<Mod> ModUnloaded;
+
+        /// <summary>
+        ///     Occurs when a Mod has cancelled async loading
+        /// </summary>
+        public event Action<Mod> ModLoadCancelled;
+
+        /// <summary>
+        ///     Occurs when a ModScene has been loaded
+        /// </summary>
+        public event Action<ModScene> SceneLoaded;
+
+        /// <summary>
+        ///     Occurs when a ModScene has been unloaded
+        /// </summary>
+        public event Action<ModScene> SceneUnloaded;
+
+        /// <summary>
+        ///     Occurs when a ModScene has cancelled async loading
+        /// </summary>
+        public event Action<ModScene> SceneLoadCancelled;
+
         protected override void Awake()
         {
             base.Awake();
@@ -112,24 +117,24 @@ namespace MultiMod
             searchDirectories = new List<ModSearchDirectory>();
 
             mods = _mods.AsReadOnly();
-            
+
             defaultSearchDirectory = Path.Combine(Directory.GetCurrentDirectory(), "Mods");
 
             if (!Directory.Exists(defaultSearchDirectory))
                 Directory.CreateDirectory(defaultSearchDirectory);
-            
-            AddSearchDirectory(defaultSearchDirectory);            
+
+            AddSearchDirectory(defaultSearchDirectory);
         }
 
         private void OnModLoaded(Resource mod)
         {
             if (ModLoaded != null)
-                ModLoaded.Invoke((Mod)mod);
+                ModLoaded.Invoke((Mod) mod);
         }
 
         private void OnModUnloaded(Resource mod)
         {
-            Mod _mod = (Mod)mod;
+            var _mod = (Mod) mod;
 
             if (ModUnloaded != null)
                 ModUnloaded.Invoke(_mod);
@@ -144,7 +149,7 @@ namespace MultiMod
         private void OnModLoadCancelled(Resource mod)
         {
             if (ModLoadCancelled != null)
-                ModLoadCancelled.Invoke((Mod)mod);
+                ModLoadCancelled.Invoke((Mod) mod);
         }
 
         private void OnSceneLoaded(ModScene scene)
@@ -161,14 +166,11 @@ namespace MultiMod
 
         private void OnSceneLoadCancelled(ModScene scene)
         {
-            if (SceneLoadCancelled != null)
-            {
-                SceneLoadCancelled.Invoke(scene);
-            }
+            if (SceneLoadCancelled != null) SceneLoadCancelled.Invoke(scene);
         }
-        
+
         /// <summary>
-        /// Add a directory that will be searched for Mods
+        ///     Add a directory that will be searched for Mods
         /// </summary>
         /// <param name="path">The path of the search directory.</param>
         public void AddSearchDirectory(string path)
@@ -176,7 +178,7 @@ namespace MultiMod
             if (searchDirectories.Any(s => s.path.NormalizedPath() == path.NormalizedPath()))
                 return;
 
-            ModSearchDirectory directory = new ModSearchDirectory(path);
+            var directory = new ModSearchDirectory(path);
 
             directory.ModFound += OnModFound;
             directory.ModRemoved += OnModRemoved;
@@ -188,12 +190,12 @@ namespace MultiMod
         }
 
         /// <summary>
-        /// Remove a directory that will be searched for mods
+        ///     Remove a directory that will be searched for mods
         /// </summary>
         /// <param name="path">The path of the search directory.</param>
         public void RemoveSearchDirectory(string path)
         {
-            ModSearchDirectory directory = searchDirectories.Find(s => s.path.NormalizedPath() == path.NormalizedPath());
+            var directory = searchDirectories.Find(s => s.path.NormalizedPath() == path.NormalizedPath());
 
             if (directory == null)
                 return;
@@ -204,15 +206,15 @@ namespace MultiMod
         }
 
         /// <summary>
-        /// Refresh all search directories and update any new, changed or removed Mods.
+        ///     Refresh all search directories and update any new, changed or removed Mods.
         /// </summary>
         public void RefreshSearchDirectories()
         {
-            foreach (ModSearchDirectory searchDirectory in searchDirectories)
+            foreach (var searchDirectory in searchDirectories)
                 searchDirectory.Refresh();
         }
 
-        IEnumerator AutoRefreshSearchDirectories()
+        private IEnumerator AutoRefreshSearchDirectories()
         {
             while (true)
             {
@@ -262,8 +264,8 @@ namespace MultiMod
                     return;
             }
 
-            Mod mod = new Mod(path);
-            
+            var mod = new Mod(path);
+
             lock (_lock)
             {
                 _modPaths.Add(path, mod);
@@ -282,7 +284,7 @@ namespace MultiMod
             mod.SceneLoadCancelled += OnSceneLoadCancelled;
 
             mod.UpdateConflicts(_mods);
-            foreach (Mod other in _mods)
+            foreach (var other in _mods)
                 other.UpdateConflicts(mod);
 
             LogUtility.LogInfo("Mod found: " + mod.name + " - " + mod.contentType);
@@ -312,7 +314,7 @@ namespace MultiMod
                 }
             }
         }
-        
+
         private void RemoveMod(Mod mod)
         {
             mod.Loaded -= OnModLoaded;
@@ -323,7 +325,7 @@ namespace MultiMod
             mod.SceneLoadCancelled -= OnSceneLoadCancelled;
             mod.SetInvalid();
 
-            foreach (Mod other in _mods)
+            foreach (var other in _mods)
                 other.UpdateConflicts(mod);
 
             LogUtility.LogInfo("Mod removed: " + mod.name);
@@ -332,21 +334,18 @@ namespace MultiMod
             ModRemoved?.Invoke(mod);
             ModsChanged?.Invoke();
         }
-                
+
         protected override void OnDestroy()
         {
             queuedRefreshMods.Clear();
 
-            foreach (Mod mod in _mods)
+            foreach (var mod in _mods)
             {
                 mod.Unload();
                 mod.SetInvalid();
             }
 
-            foreach (ModSearchDirectory searchDirectory in searchDirectories)
-            {
-                searchDirectory.Dispose();
-            }
+            foreach (var searchDirectory in searchDirectories) searchDirectory.Dispose();
 
             base.OnDestroy();
         }

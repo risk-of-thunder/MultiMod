@@ -3,7 +3,7 @@
 namespace MultiMod
 {
     /// <summary>
-    /// A generic singleton class for MonoBehaviours
+    ///     A generic singleton class for MonoBehaviours
     /// </summary>
     /// <typeparam name="T">The singleton's Type.</typeparam>
     public class UnitySingleton<T> : MonoBehaviour where T : Component
@@ -11,7 +11,7 @@ namespace MultiMod
         private static T _instance;
 
         /// <summary>
-        /// Singleton instance.
+        ///     Singleton instance.
         /// </summary>
         public static T instance
         {
@@ -22,11 +22,12 @@ namespace MultiMod
                     _instance = FindObjectOfType<T>();
                     if (_instance == null)
                     {
-                        GameObject obj = new GameObject();
+                        var obj = new GameObject();
                         obj.name = typeof(T).Name;
                         _instance = obj.AddComponent<T>();
                     }
                 }
+
                 return _instance;
             }
         }
@@ -36,7 +37,7 @@ namespace MultiMod
             if (_instance == null)
             {
                 _instance = this as T;
-                DontDestroyOnLoad(this.gameObject);
+                DontDestroyOnLoad(gameObject);
             }
             else
             {
@@ -46,7 +47,7 @@ namespace MultiMod
 
         protected virtual void OnDestroy()
         {
-            if(_instance == this)
+            if (_instance == this)
                 _instance = null;
         }
     }

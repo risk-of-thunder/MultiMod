@@ -1,9 +1,7 @@
-﻿
-using MultiMod.Shared;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
+using MultiMod.Shared;
 using UnityEditor;
 using UnityEngine;
 
@@ -11,32 +9,33 @@ namespace MultiMod.Editor
 {
     public class AsmDef
     {
-        public string name;
-        public string[] references;
-        public string[] optionalUnityReferences;
         public bool allowUnsafeCode;
-        public bool overrideReferences;
-        public string[] precompiledReferences;
         public bool autoReferenced;
         public string[] defineConstraints;
+        public string name;
+        public string[] optionalUnityReferences;
+        public bool overrideReferences;
+        public string[] precompiledReferences;
+        public string[] references;
     }
+
     public class Export
     {
-        private readonly ExportSettings settings;
-        private readonly string prefix;
         private readonly List<string> asmDefPaths;
         private readonly List<string> assetPaths;
-        private readonly string tempModDirectory;
         private readonly string modDirectory;
+        private readonly string prefix;
+        private readonly ExportSettings settings;
+        private readonly string tempModDirectory;
 
         public Export(ExportSettings settings)
         {
             this.settings = settings;
-            this.prefix = $"{settings.name}-{settings.version}";
-            this.asmDefPaths = AssetUtility.GetAssets("t:AssemblyDefinitionAsset");
-            this.assetPaths = AssetUtility.GetAssets("t:prefab t:scriptableobject");
-            this.tempModDirectory = Path.Combine("Temp", settings.name);
-            this.modDirectory = Path.Combine(settings.outputDirectory, settings.name);
+            prefix = $"{settings.name}-{settings.version}";
+            asmDefPaths = AssetUtility.GetAssets("t:AssemblyDefinitionAsset");
+            assetPaths = AssetUtility.GetAssets("t:prefab t:scriptableobject");
+            tempModDirectory = Path.Combine("Temp", settings.name);
+            modDirectory = Path.Combine(settings.outputDirectory, settings.name);
         }
 
         public void SetAssetBundle(string assetPath)
@@ -50,15 +49,15 @@ namespace MultiMod.Editor
         {
             Directory.CreateDirectory(targetDirectory);
 
-            foreach (string file in Directory.GetFiles(sourceDirectory))
+            foreach (var file in Directory.GetFiles(sourceDirectory))
             {
-                string fileName = Path.GetFileName(file);
+                var fileName = Path.GetFileName(file);
                 File.Copy(file, Path.Combine(targetDirectory, fileName), true);
             }
 
-            foreach (string subDirectory in Directory.GetDirectories(sourceDirectory))
+            foreach (var subDirectory in Directory.GetDirectories(sourceDirectory))
             {
-                string targetSubDirectory = Path.Combine(targetDirectory, Path.GetFileName(subDirectory));
+                var targetSubDirectory = Path.Combine(targetDirectory, Path.GetFileName(subDirectory));
                 CopyAll(subDirectory, targetSubDirectory);
             }
         }
@@ -95,13 +94,14 @@ namespace MultiMod.Editor
         private void ExportModAssets()
         {
             assetPaths.ForEach(SetAssetBundle);
-            ModPlatform.Windows.GetBuildTargets().ForEach(target => {
+            ModPlatform.Windows.GetBuildTargets().ForEach(target =>
+            {
                 var platform = target.GetModPlatform().ToString();
                 var subDir = Path.Combine(tempModDirectory, platform);
                 Directory.CreateDirectory(subDir);
                 Debug.Log($"Exporting assets for {platform} to: {subDir}");
                 BuildPipeline.BuildAssetBundles(subDir, BuildAssetBundleOptions.None, target);
-            });            
+            });
         }
 
         private void SaveMetadata()
@@ -128,7 +128,8 @@ namespace MultiMod.Editor
                 Debug.Log($"Copying {tempModDirectory} => {modDirectory}");
                 CopyAll(tempModDirectory, modDirectory);
                 LogUtility.LogInfo($"Export completed: {modDirectory}");
-            } catch (Exception e)
+            }
+            catch (Exception e)
             {
                 LogUtility.LogWarning("There was an issue while copying the mod to the output folder. ");
                 LogUtility.LogWarning(e.Message);

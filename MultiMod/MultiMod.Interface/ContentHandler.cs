@@ -1,43 +1,30 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace MultiMod
 {
-
 }
 
 namespace MultiMod.Interface
 {
     /// <summary>
-    /// Handles a Mod's content.
+    ///     Handles a Mod's content.
     /// </summary>
     public class ContentHandler
     {
-        /// <summary>
-        /// The Mod resource.
-        /// </summary>
-        public IResource mod { get; private set; }
+        private readonly List<GameObject> gameObjects;
 
         /// <summary>
-        /// The Mod's ModScene resources.
-        /// </summary>
-        public ReadOnlyCollection<IResource> modScenes { get; private set; }
-
-        /// <summary>
-        /// The Mod's prefabs. 
-        /// </summary>
-        public ReadOnlyCollection<GameObject> prefabs { get; private set; }
-                
-        private List<GameObject> gameObjects;
-        
-        /// <summary>
-        /// Initialize a new ContentHandler with a Mod, ModScenes and prefabs.
+        ///     Initialize a new ContentHandler with a Mod, ModScenes and prefabs.
         /// </summary>
         /// <param name="mod">A Mod resource</param>
         /// <param name="modScenes">ModScene resources</param>
         /// <param name="prefabs">prefab GameObjects</param>
-        public ContentHandler(IResource mod, ReadOnlyCollection<IResource> modScenes, ReadOnlyCollection<GameObject> prefabs)
+        public ContentHandler(IResource mod, ReadOnlyCollection<IResource> modScenes,
+            ReadOnlyCollection<GameObject> prefabs)
         {
             this.mod = mod;
             this.modScenes = modScenes;
@@ -47,14 +34,29 @@ namespace MultiMod.Interface
         }
 
         /// <summary>
-        /// Add a Component to a GameObject.
+        ///     The Mod resource.
+        /// </summary>
+        public IResource mod { get; }
+
+        /// <summary>
+        ///     The Mod's ModScene resources.
+        /// </summary>
+        public ReadOnlyCollection<IResource> modScenes { get; }
+
+        /// <summary>
+        ///     The Mod's prefabs.
+        /// </summary>
+        public ReadOnlyCollection<GameObject> prefabs { get; }
+
+        /// <summary>
+        ///     Add a Component to a GameObject.
         /// </summary>
         /// <typeparam name="T">The Component Type.</typeparam>
         /// <param name="gameObject">The GameObject to which to add the Component.</param>
         /// <returns>The added Component.</returns>
         public T AddComponent<T>(GameObject gameObject) where T : Component
         {
-            T component = gameObject.AddComponent<T>();
+            var component = gameObject.AddComponent<T>();
 
             InitializeComponent(component);
 
@@ -62,64 +64,61 @@ namespace MultiMod.Interface
         }
 
         /// <summary>
-        /// Add a Component to a GameObject.
+        ///     Add a Component to a GameObject.
         /// </summary>
         /// <param name="componentType">The Component Type.</param>
         /// <param name="gameObject">The GameObject to which to add the Component.</param>
         /// <returns>The added Component.</returns>
-        public Component AddComponent(System.Type componentType, GameObject gameObject)
+        public Component AddComponent(Type componentType, GameObject gameObject)
         {
-            Component component = gameObject.AddComponent(componentType);
+            var component = gameObject.AddComponent(componentType);
 
             InitializeComponent(component);
 
             return component;
         }
-               
+
         private void InitializeComponent(Component component)
         {
             if (component is IModHandler)
             {
-                IModHandler modHandler = component as IModHandler;
+                var modHandler = component as IModHandler;
                 modHandler.OnLoaded(this);
             }
         }
-        
+
         private void InitializeGameObject(GameObject go)
         {
-            Component[] components = go.GetComponentsInChildren<Component>();
+            var components = go.GetComponentsInChildren<Component>();
 
-            foreach(Component component in components)
-            {
-                InitializeComponent(component);
-            }
+            foreach (var component in components) InitializeComponent(component);
         }
 
         private void InitializeObject(Object obj)
         {
             if (obj is GameObject)
             {
-                GameObject gameObject = obj as GameObject;
+                var gameObject = obj as GameObject;
                 gameObjects.Add(gameObject);
                 InitializeGameObject(gameObject);
             }
             else if (obj is Component)
             {
-                Component component = obj as Component;
+                var component = obj as Component;
                 gameObjects.Add(component.gameObject);
                 InitializeGameObject(component.gameObject);
             }
         }
 
         /// <summary>
-        /// Create a copy of the Object original.
+        ///     Create a copy of the Object original.
         /// </summary>
         /// <typeparam name="T">The Object's Type.</typeparam>
         /// <param name="original">An existing Object to copy.</param>
         /// <returns>The new Object.</returns>
-        public T Instantiate<T>(T original) where T : UnityEngine.Object
+        public T Instantiate<T>(T original) where T : Object
         {
-            T obj = UnityEngine.Object.Instantiate(original);
+            var obj = Object.Instantiate(original);
 
             InitializeObject(obj);
 
@@ -127,15 +126,15 @@ namespace MultiMod.Interface
         }
 
         /// <summary>
-        /// Create a copy of the Object original.
+        ///     Create a copy of the Object original.
         /// </summary>
         /// <param name="original">An existing Object to copy.</param>
         /// <param name="position">The position for the new Object.</param>
         /// <param name="rotation">The roration for the new Object.</param>
         /// <returns>The new Object.</returns>
-        public Object Instantiate(UnityEngine.Object original, Vector3 position, Quaternion rotation)
+        public Object Instantiate(Object original, Vector3 position, Quaternion rotation)
         {
-            var obj = UnityEngine.Object.Instantiate(original, position, rotation);
+            var obj = Object.Instantiate(original, position, rotation);
 
             InitializeObject(obj);
 
@@ -143,47 +142,43 @@ namespace MultiMod.Interface
         }
 
         /// <summary>
-        /// Create a copy of the Object original.
+        ///     Create a copy of the Object original.
         /// </summary>
         /// <param name="original">An existing Object to copy.</param>
         /// <returns>The new Object.</returns>
-        public UnityEngine.Object Instantiate(UnityEngine.Object original)
+        public Object Instantiate(Object original)
         {
             return Instantiate(original, Vector3.zero, Quaternion.identity);
         }
 
         /// <summary>
-        /// Destroy an Object.
+        ///     Destroy an Object.
         /// </summary>
         /// <param name="obj">The Object to destroy.</param>
         public void Destroy(Object obj)
         {
             if (obj == null)
                 return;
-            
-            if(obj is GameObject)
-            {
-                GameObject gameObject = obj as GameObject;
 
-                if (gameObjects.Contains(gameObject)) 
+            if (obj is GameObject)
+            {
+                var gameObject = obj as GameObject;
+
+                if (gameObjects.Contains(gameObject))
                     gameObjects.Remove(gameObject);
             }
-            
+
             Object.Destroy(obj);
         }
 
         /// <summary>
-        /// Destroy all instantiated GameObjects.
+        ///     Destroy all instantiated GameObjects.
         /// </summary>
         public void Clear()
         {
-            foreach(GameObject gameObject in gameObjects)
-            {
+            foreach (var gameObject in gameObjects)
                 if (gameObject != null)
-                {
                     Object.Destroy(gameObject);
-                }
-            }
 
             gameObjects.Clear();
         }

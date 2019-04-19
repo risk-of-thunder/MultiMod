@@ -5,69 +5,57 @@ using MultiMod.Interface;
 namespace MultiMod
 {
     /// <summary>
-    /// Represents a load state.
+    ///     Represents a load state.
     /// </summary>
-    public enum ResourceLoadState { Unloaded, Loading, Loaded, Cancelling, Unloading }
+    public enum ResourceLoadState
+    {
+        Unloaded,
+        Loading,
+        Loaded,
+        Cancelling,
+        Unloading
+    }
 
     /// <summary>
-    /// A class that supports async loading of various resources.
+    ///     A class that supports async loading of various resources.
     /// </summary>
     public abstract class Resource : IResource
     {
-        /// <summary>
-        /// Occurs when this Resource has been loaded.
-        /// </summary>
-        public event Action<Resource> Loaded;
+        private float _loadProgress;
+
+        private LoadState _loadState;
 
         /// <summary>
-        /// Occurs when this Resource has been unloaded.
+        ///     Initialize a Resource with a name.
         /// </summary>
-        public event Action<Resource> Unloaded;
+        /// <param name="name">The Resource's name</param>
+        protected Resource(string name)
+        {
+            this.name = name;
+            _loadState = new UnloadedState(this);
+        }
 
         /// <summary>
-        /// Occurs when this Resource's async loading has been cancelled.
+        ///     Is this Resource busy loading?
         /// </summary>
-        public event Action<Resource> LoadCancelled;
+        public virtual bool isBusy => _loadState.isBusy;
 
         /// <summary>
-        /// Occurs when this Resources async loading has been resumed.
+        ///     Can this Resource be loaded?
         /// </summary>
-        public event Action<Resource> LoadResumed;
+        public virtual bool canLoad => true;
 
         /// <summary>
-        /// Occurs when this Resource's loadProgress changes.
+        ///     This Resource's current load state.
         /// </summary>
-        public event Action<float> LoadProgress;
-        
-        /// <summary>
-        /// This Resource's name.
-        /// </summary>
-        public string name { get; private set; }
+        public ResourceLoadState loadState => _loadState.loadState;
 
         /// <summary>
-        /// Is this Resource busy loading?
-        /// </summary>
-        public virtual bool isBusy { get { return _loadState.isBusy; } }
-
-        /// <summary>
-        /// Can this Resource be loaded?
-        /// </summary>
-        public virtual bool canLoad { get { return true; } }
-
-        /// <summary>
-        /// This Resource's current load state.
-        /// </summary>
-        public ResourceLoadState loadState { get { return _loadState.loadState; } }
-
-        /// <summary>
-        /// What is the Resource's load progress.
+        ///     What is the Resource's load progress.
         /// </summary>
         public float loadProgress
         {
-            get
-            {
-                return _loadProgress;
-            }
+            get => _loadProgress;
             protected set
             {
                 if (value == _loadProgress)
@@ -78,21 +66,13 @@ namespace MultiMod
             }
         }
 
-        private LoadState _loadState;
-        private float _loadProgress = 0;
-        
         /// <summary>
-        /// Initialize a Resource with a name.
+        ///     This Resource's name.
         /// </summary>
-        /// <param name="name">The Resource's name</param>
-        protected Resource(string name)
-        {
-            this.name = name;
-            _loadState = new UnloadedState(this);
-        }
+        public string name { get; }
 
         /// <summary>
-        /// Load this Resource.
+        ///     Load this Resource.
         /// </summary>
         public void Load()
         {
@@ -100,7 +80,7 @@ namespace MultiMod
         }
 
         /// <summary>
-        /// Load this Resource asynchronously.
+        ///     Load this Resource asynchronously.
         /// </summary>
         public void LoadAsync()
         {
@@ -108,23 +88,7 @@ namespace MultiMod
         }
 
         /// <summary>
-        /// Coroutine that loads this Resource.
-        /// </summary>
-        public IEnumerator LoadCoroutine()
-        {
-            yield return _loadState.Load();
-        }
-
-        /// <summary>
-        /// Coroutine that loads this Resource asynchronously.
-        /// </summary>
-        public IEnumerator LoadAsyncCoroutine()
-        {
-            yield return _loadState.LoadAsync();
-        }
-
-        /// <summary>
-        /// Unload this Resource.
+        ///     Unload this Resource.
         /// </summary>
         public void Unload()
         {
@@ -132,7 +96,48 @@ namespace MultiMod
         }
 
         /// <summary>
-        /// Finalize the current LoadState.
+        ///     Occurs when this Resource has been loaded.
+        /// </summary>
+        public event Action<Resource> Loaded;
+
+        /// <summary>
+        ///     Occurs when this Resource has been unloaded.
+        /// </summary>
+        public event Action<Resource> Unloaded;
+
+        /// <summary>
+        ///     Occurs when this Resource's async loading has been cancelled.
+        /// </summary>
+        public event Action<Resource> LoadCancelled;
+
+        /// <summary>
+        ///     Occurs when this Resources async loading has been resumed.
+        /// </summary>
+        public event Action<Resource> LoadResumed;
+
+        /// <summary>
+        ///     Occurs when this Resource's loadProgress changes.
+        /// </summary>
+        public event Action<float> LoadProgress;
+
+        /// <summary>
+        ///     Coroutine that loads this Resource.
+        /// </summary>
+        public IEnumerator LoadCoroutine()
+        {
+            yield return _loadState.Load();
+        }
+
+        /// <summary>
+        ///     Coroutine that loads this Resource asynchronously.
+        /// </summary>
+        public IEnumerator LoadAsyncCoroutine()
+        {
+            yield return _loadState.LoadAsync();
+        }
+
+        /// <summary>
+        ///     Finalize the current LoadState.
         /// </summary>
         protected void End()
         {
@@ -140,30 +145,29 @@ namespace MultiMod
         }
 
         /// <summary>
-        /// Use this to implement anything that should happen before unloading this Resource.
+        ///     Use this to implement anything that should happen before unloading this Resource.
         /// </summary>
         protected virtual void PreUnLoadResources()
         {
-
         }
 
         /// <summary>
-        /// Use this to implement unloading this Resource.
+        ///     Use this to implement unloading this Resource.
         /// </summary>
         protected abstract void UnloadResources();
 
         /// <summary>
-        /// Use this to implement loading this Resource.
+        ///     Use this to implement loading this Resource.
         /// </summary>
         protected abstract IEnumerator LoadResources();
 
         /// <summary>
-        /// Use this to implement loading this Resource asynchronously.
+        ///     Use this to implement loading this Resource asynchronously.
         /// </summary>
         protected abstract IEnumerator LoadResourcesAsync();
 
         /// <summary>
-        /// Handle end of loading.
+        ///     Handle end of loading.
         /// </summary>
         protected virtual void OnLoaded()
         {
@@ -172,7 +176,7 @@ namespace MultiMod
         }
 
         /// <summary>
-        /// Handle end of unloading.
+        ///     Handle end of unloading.
         /// </summary>
         protected virtual void OnUnloaded()
         {
@@ -181,7 +185,7 @@ namespace MultiMod
         }
 
         /// <summary>
-        /// Handle load cancelling.
+        ///     Handle load cancelling.
         /// </summary>
         protected virtual void OnLoadCancelled()
         {
@@ -189,25 +193,25 @@ namespace MultiMod
         }
 
         /// <summary>
-        /// Handle load resuming.
+        ///     Handle load resuming.
         /// </summary>
         protected virtual void OnLoadResumed()
         {
             LoadResumed?.Invoke(this);
         }
-        
+
         private abstract class LoadState
         {
-            protected Resource resource;
-
-            public virtual bool isBusy { get { return false; } }
-
-            public abstract ResourceLoadState loadState { get; }
+            protected readonly Resource resource;
 
             protected LoadState(Resource resource)
             {
                 this.resource = resource;
             }
+
+            public virtual bool isBusy => false;
+
+            public abstract ResourceLoadState loadState { get; }
 
             public virtual IEnumerator Load()
             {
@@ -221,26 +225,20 @@ namespace MultiMod
 
             public virtual void Unload()
             {
-
             }
 
             public virtual void End()
             {
-
             }
         }
 
-        class UnloadedState : LoadState
+        private class UnloadedState : LoadState
         {
-            public override ResourceLoadState loadState
-            {
-                get { return ResourceLoadState.Unloaded; }
-            }
-
             public UnloadedState(Resource resource) : base(resource)
             {
-
             }
+
+            public override ResourceLoadState loadState => ResourceLoadState.Unloaded;
 
             public override IEnumerator Load()
             {
@@ -248,7 +246,7 @@ namespace MultiMod
                 {
                     resource._loadState = new LoadingState(resource);
                     yield return resource.LoadResources(); //TODO: this skips a frame
-                    resource.End();                    
+                    resource.End();
                 }
             }
 
@@ -263,26 +261,19 @@ namespace MultiMod
             }
         }
 
-        class LoadingState : LoadState
+        private class LoadingState : LoadState
         {
-            public override bool isBusy
-            {
-                get { return true; }
-            }
-
-            public override ResourceLoadState loadState
-            {
-                get { return ResourceLoadState.Loading; }
-            }
-
             public LoadingState(Resource resource) : base(resource)
             {
-
             }
+
+            public override bool isBusy => true;
+
+            public override ResourceLoadState loadState => ResourceLoadState.Loading;
 
             public override void End()
             {
-                resource._loadState = new LoadedState(resource);                
+                resource._loadState = new LoadedState(resource);
                 resource.OnLoaded();
             }
 
@@ -292,17 +283,13 @@ namespace MultiMod
             }
         }
 
-        class LoadedState : LoadState
+        private class LoadedState : LoadState
         {
-            public override ResourceLoadState loadState
-            {
-                get { return ResourceLoadState.Loaded; }
-            }
-
             public LoadedState(Resource resource) : base(resource)
             {
-
             }
+
+            public override ResourceLoadState loadState => ResourceLoadState.Loaded;
 
             public override void Unload()
             {
@@ -321,25 +308,18 @@ namespace MultiMod
             }
         }
 
-        class CancellingState : LoadState
+        private class CancellingState : LoadState
         {
-            public override bool isBusy
-            {
-                get { return true; }
-            }
-
-            public override ResourceLoadState loadState
-            {
-                get { return ResourceLoadState.Cancelling; }
-            }
-
             public CancellingState(Resource resource) : base(resource)
             {
-
             }
 
+            public override bool isBusy => true;
+
+            public override ResourceLoadState loadState => ResourceLoadState.Cancelling;
+
             public override IEnumerator Load()
-            {               
+            {
                 resource.OnLoadResumed();
                 resource._loadState = new LoadingState(resource);
                 yield break;
@@ -354,29 +334,22 @@ namespace MultiMod
 
             public override void End()
             {
-                resource._loadState = new UnloadedState(resource);     
+                resource._loadState = new UnloadedState(resource);
                 resource.PreUnLoadResources();
                 resource.UnloadResources();
                 resource.OnLoadCancelled();
             }
         }
 
-        class UnloadingState : LoadState
+        private class UnloadingState : LoadState
         {
-            public override bool isBusy
-            {
-                get { return true; }
-            }
-
-            public override ResourceLoadState loadState
-            {
-                get { return ResourceLoadState.Unloading; }
-            }
-
             public UnloadingState(Resource resource) : base(resource)
             {
-
             }
+
+            public override bool isBusy => true;
+
+            public override ResourceLoadState loadState => ResourceLoadState.Unloading;
 
             public override IEnumerator Load()
             {
@@ -393,7 +366,7 @@ namespace MultiMod
             }
 
             public override void End()
-            {               
+            {
                 resource.PreUnLoadResources();
                 resource.UnloadResources();
                 resource._loadState = new UnloadedState(resource);

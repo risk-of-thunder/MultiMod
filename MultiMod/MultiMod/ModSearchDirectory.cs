@@ -7,48 +7,26 @@ using System.Threading;
 namespace MultiMod
 {
     /// <summary>
-    /// Represents a directory that is monitored for Mods.
+    ///     Represents a directory that is monitored for Mods.
     /// </summary>
     public class ModSearchDirectory : IDisposable
     {
-        /// <summary>
-        /// Occurs when a new Mod has been found.
-        /// </summary>
-        public event Action<string> ModFound;
-        /// <summary>
-        /// Occurs when a Mod has been removed.
-        /// </summary>
-        public event Action<string> ModRemoved;
-        /// <summary>
-        /// Occurs when a change to a Mod's directory has been detected.
-        /// </summary>
-        public event Action<string> ModChanged;
-        /// <summary>
-        /// Occurs when any change was detected for any Mod in this search directory.
-        /// </summary>
-        public event Action ModsChanged;
+        private readonly Dictionary<string, long> _modPaths;
 
-        /// <summary>
-        /// This ModSearchDirectory's path.
-        /// </summary>
-        public string path { get; private set; }
-
-        private Dictionary<string, long> _modPaths;
-
-        private Thread backgroundRefresh;
-        private AutoResetEvent refreshEvent;
+        private readonly Thread backgroundRefresh;
         private bool disposed;
+        private readonly AutoResetEvent refreshEvent;
 
         /// <summary>
-        /// Initialize a new ModSearchDirectory with a path.
+        ///     Initialize a new ModSearchDirectory with a path.
         /// </summary>
         /// <param name="path">The path to the search directory.</param>
         public ModSearchDirectory(string path)
         {
             this.path = Path.GetFullPath(path);
 
-            if (!Directory.Exists(this.path))            
-                throw new DirectoryNotFoundException(this.path);            
+            if (!Directory.Exists(this.path))
+                throw new DirectoryNotFoundException(this.path);
 
             _modPaths = new Dictionary<string, long>(StringComparer.OrdinalIgnoreCase);
 
@@ -59,7 +37,46 @@ namespace MultiMod
         }
 
         /// <summary>
-        /// Refresh the collection of mod paths. Remove all missing paths and add all new paths.
+        ///     This ModSearchDirectory's path.
+        /// </summary>
+        public string path { get; }
+
+        /// <summary>
+        ///     Releases all resources used by the ModSearchDirectory.
+        /// </summary>
+        public void Dispose()
+        {
+            ModFound = null;
+            ModRemoved = null;
+            ModChanged = null;
+
+            disposed = true;
+            refreshEvent.Set();
+            backgroundRefresh.Join();
+        }
+
+        /// <summary>
+        ///     Occurs when a new Mod has been found.
+        /// </summary>
+        public event Action<string> ModFound;
+
+        /// <summary>
+        ///     Occurs when a Mod has been removed.
+        /// </summary>
+        public event Action<string> ModRemoved;
+
+        /// <summary>
+        ///     Occurs when a change to a Mod's directory has been detected.
+        /// </summary>
+        public event Action<string> ModChanged;
+
+        /// <summary>
+        ///     Occurs when any change was detected for any Mod in this search directory.
+        /// </summary>
+        public event Action ModsChanged;
+
+        /// <summary>
+        ///     Refresh the collection of mod paths. Remove all missing paths and add all new paths.
         /// </summary>
         public void Refresh()
         {
@@ -72,7 +89,7 @@ namespace MultiMod
 
             refreshEvent.WaitOne();
 
-            while(!disposed)
+            while (!disposed)
             {
                 DoRefresh();
 
@@ -84,11 +101,11 @@ namespace MultiMod
         {
             //LogUtility.LogDebug("Refreshing Mod search directory: " + path);
 
-            bool changed = false;            
+            var changed = false;
 
-            string[] modInfoPaths = GetModInfoPaths();
+            var modInfoPaths = GetModInfoPaths();
 
-            foreach (string path in _modPaths.Keys.ToArray())
+            foreach (var path in _modPaths.Keys.ToArray())
             {
                 if (!modInfoPaths.Contains(path))
                 {
@@ -97,10 +114,10 @@ namespace MultiMod
                     continue;
                 }
 
-                DirectoryInfo modDirectory = new DirectoryInfo(Path.GetDirectoryName(path));
+                var modDirectory = new DirectoryInfo(Path.GetDirectoryName(path));
 
-                long currentTicks = DateTime.Now.Ticks;
-                long lastWriteTime = _modPaths[path];
+                var currentTicks = DateTime.Now.Ticks;
+                var lastWriteTime = _modPaths[path];
 
                 if (modDirectory.LastWriteTime.Ticks > lastWriteTime)
                 {
@@ -110,8 +127,7 @@ namespace MultiMod
                     continue;
                 }
 
-                foreach (DirectoryInfo directory in modDirectory.GetDirectories("*", SearchOption.AllDirectories))
-                {
+                foreach (var directory in modDirectory.GetDirectories("*", SearchOption.AllDirectories))
                     if (directory.LastWriteTime.Ticks > lastWriteTime)
                     {
                         changed = true;
@@ -119,9 +135,8 @@ namespace MultiMod
                         UpdateModPath(path);
                         break;
                     }
-                }
 
-                foreach (FileInfo file in modDirectory.GetFiles("*", SearchOption.AllDirectories))
+                foreach (var file in modDirectory.GetFiles("*", SearchOption.AllDirectories))
                 {
                     if (file.Extension == ".info")
                         continue;
@@ -136,14 +151,12 @@ namespace MultiMod
                 }
             }
 
-            foreach (string path in modInfoPaths)
-            {
+            foreach (var path in modInfoPaths)
                 if (!_modPaths.ContainsKey(path))
                 {
                     changed = true;
                     AddModPath(path);
                 }
-            }
 
             if (changed)
                 ModsChanged?.Invoke();
@@ -178,24 +191,10 @@ namespace MultiMod
 
             ModChanged?.Invoke(path);
         }
-                
+
         private string[] GetModInfoPaths()
         {
             return Directory.GetFiles(path, "*.info", SearchOption.AllDirectories);
-        }
-
-        /// <summary>
-        /// Releases all resources used by the ModSearchDirectory.
-        /// </summary>
-        public void Dispose()
-        {
-            ModFound = null;
-            ModRemoved = null;
-            ModChanged = null;
-
-            disposed = true;
-            refreshEvent.Set();
-            backgroundRefresh.Join();
         }
     }
 }

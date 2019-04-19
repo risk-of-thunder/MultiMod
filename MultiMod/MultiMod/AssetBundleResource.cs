@@ -10,20 +10,6 @@ namespace MultiMod
 {
     internal class AssetBundleResource : Resource
     {
-        public string path { get; private set; }
-        
-        public AssetBundle assetBundle { get; private set; }
-
-        public ReadOnlyCollection<string> assetPaths { get; private set; }
-
-        public override bool canLoad
-        {
-            get
-            {
-                return _canLoad;
-            }
-        }
-
         private bool _canLoad;
 
         public AssetBundleResource(string name, string path) : base(name)
@@ -35,6 +21,14 @@ namespace MultiMod
             GetAssetPaths();
         }
 
+        public string path { get; }
+
+        public AssetBundle assetBundle { get; private set; }
+
+        public ReadOnlyCollection<string> assetPaths { get; private set; }
+
+        public override bool canLoad => _canLoad;
+
         protected override IEnumerator LoadResources()
         {
             assetBundle = AssetBundle.LoadFromFile(path);
@@ -44,9 +38,9 @@ namespace MultiMod
 
         protected override IEnumerator LoadResourcesAsync()
         {
-            AssetBundleCreateRequest assetBundleCreateRequest = AssetBundle.LoadFromFileAsync(path);
-            
-            while(!assetBundleCreateRequest.isDone)
+            var assetBundleCreateRequest = AssetBundle.LoadFromFileAsync(path);
+
+            while (!assetBundleCreateRequest.isDone)
             {
                 loadProgress = assetBundleCreateRequest.progress;
                 yield return null;
@@ -57,7 +51,7 @@ namespace MultiMod
 
         protected override void UnloadResources()
         {
-            if(assetBundle != null)
+            if (assetBundle != null)
                 assetBundle.Unload(true);
 
             assetBundle = null;
@@ -65,7 +59,7 @@ namespace MultiMod
 
         private void GetAssetPaths()
         {
-            List<string> assetPaths = new List<string>();
+            var assetPaths = new List<string>();
 
             this.assetPaths = assetPaths.AsReadOnly();
 
@@ -75,7 +69,7 @@ namespace MultiMod
             if (!File.Exists(path))
                 return;
 
-            string manifestPath = path + ".manifest";
+            var manifestPath = path + ".manifest";
 
             if (!File.Exists(manifestPath))
             {
@@ -86,16 +80,16 @@ namespace MultiMod
             _canLoad = true;
 
             //TODO: long lines in manifest are formatted?
-            string[] lines = File.ReadAllLines(manifestPath);
+            var lines = File.ReadAllLines(manifestPath);
 
-            int start = Array.IndexOf(lines, "Assets:") + 1;
+            var start = Array.IndexOf(lines, "Assets:") + 1;
 
-            for (int i = start; i < lines.Length; i++)
+            for (var i = start; i < lines.Length; i++)
             {
                 if (!lines[i].StartsWith("- "))
                     break;
 
-                string assetPath = lines[i].Substring(2);
+                var assetPath = lines[i].Substring(2);
 
                 //Note: if the asset is a scene, we only need the name
                 if (assetPath.EndsWith(".unity"))

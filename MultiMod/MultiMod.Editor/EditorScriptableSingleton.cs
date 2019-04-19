@@ -4,6 +4,13 @@ namespace MultiMod.Editor
 {
     public abstract class EditorScriptableSingleton<T> : ScriptableObject where T : EditorScriptableSingleton<T>
     {
+        private static T _instance;
+
+        protected EditorScriptableSingleton()
+        {
+            if (_instance == null)
+                _instance = this as T;
+        }
         //Note: Unity versions 5.6 and earlier fail to load ScriptableObject assets for Types that are defined in an editor assembly 
         //and derive from a Type defined in a non-editor assembly.
 
@@ -18,15 +25,7 @@ namespace MultiMod.Editor
             }
         }
 
-        private static T _instance;
-
-        protected EditorScriptableSingleton()
-        {
-            if (_instance == null)
-                _instance = this as T;
-        }
-
-        void OnEnable()
+        private void OnEnable()
         {
             if (_instance == null)
                 _instance = this as T;
@@ -38,7 +37,7 @@ namespace MultiMod.Editor
 
             if (_instance == null)
                 Debug.Log("Instance was null, loading resource.");
-                _instance = Resources.Load<T>(typeof(T).Name);
+            _instance = Resources.Load<T>(typeof(T).Name);
 
             if (_instance == null)
             {
