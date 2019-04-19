@@ -51,10 +51,6 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
     <Reference Include="UnityEditor, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\libs\UnityEditor.dll</HintPath>
@@ -89,14 +85,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\MultiMod.Cecil\MultiMod.Cecil.csproj">
-      <Project>{c07be8a5-f75a-4a95-8ed1-450162264eaf}</Project>
-      <Name>MultiMod.Cecil</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\MultiMod.Interface\MultiMod.Interface.csproj">
-      <Project>{f3f7f434-f83d-4ab5-872c-122d89ec81ea}</Project>
-      <Name>MultiMod.Interface</Name>
-    </ProjectReference>
     <ProjectReference Include="..\MultiMod.Shared\MultiMod.Shared.csproj">
       <Project>{5e13231b-ca13-4496-b32c-bb033b15a379}</Project>
       <Name>MultiMod.Shared</Name>
