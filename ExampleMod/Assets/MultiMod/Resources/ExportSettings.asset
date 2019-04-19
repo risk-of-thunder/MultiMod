@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: -787286444, guid: e44e3718a34a0434ea385352814a461d, type: 3}
   m_Name: ExportSettings
   m_EditorClassIdentifier: 
-  _name: ExampleMod
   _author: MultiMod
   _description: ExampleMod for MultiMod
-  _version: 0.0.1
+  _name: ExampleMod
   _outputDirectory: S:/SteamLibrary/steamapps/common/Risk of Rain 2/BepInEx/plugins/multimod/mods
+  _version: 0.0.1
