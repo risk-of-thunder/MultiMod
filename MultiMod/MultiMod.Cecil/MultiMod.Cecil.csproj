@@ -69,7 +69,9 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>echo f | xcopy /s /i /Y "$(TargetDir)$(TargetName).dll" "$(SolutionDir)ExampleMod\Assets\MultiMod\Editor\$(TargetName).dll"
-echo f | xcopy /s /i /Y "$(TargetDir)Mono.Cecil.dll" "$(SolutionDir)ExampleMod\Assets\MultiMod\Editor\Mono.Cecil.dll"</PostBuildEvent>
+echo f | xcopy /s /i /Y "$(TargetDir)Mono.Cecil.dll" "$(SolutionDir)ExampleMod\Assets\MultiMod\Editor\Mono.Cecil.dll"
+
+echo f | xcopy /s /i /Y "$(TargetDir)$(TargetName).dll" "$(SolutionDir)build\multimod\$(TargetName).dll"</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
     <PreBuildEvent>

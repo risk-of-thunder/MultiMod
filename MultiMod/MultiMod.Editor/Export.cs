@@ -11,6 +11,7 @@ namespace MultiMod.Editor
     {
         private readonly List<string> asmDefPaths;
         private readonly List<string> assetPaths;
+        private readonly List<string> scenePaths;
         private readonly string modDirectory;
         private readonly string prefix;
         private readonly ExportSettings settings;
@@ -22,15 +23,16 @@ namespace MultiMod.Editor
             prefix = $"{settings.name}-{settings.version}";
             asmDefPaths = AssetUtility.GetAssets("t:AssemblyDefinitionAsset");
             assetPaths = AssetUtility.GetAssets("t:prefab t:scriptableobject");
+            scenePaths = AssetUtility.GetAssets("t:scene");
             tempModDirectory = Path.Combine("Temp", settings.name);
             modDirectory = Path.Combine(settings.outputDirectory, settings.name);
         }
 
-        public void SetAssetBundle(string assetPath)
+        public void SetAssetBundle(string assetPath, string variant = "assets")
         {
             var importer = AssetImporter.GetAtPath(assetPath);
             importer.assetBundleName = settings.name;
-            importer.assetBundleVariant = "assets";
+            importer.assetBundleVariant = variant;
         }
 
         private void CopyAll(string sourceDirectory, string targetDirectory)
@@ -81,9 +83,9 @@ namespace MultiMod.Editor
 
         private void ExportModAssets()
         {
-            assetPaths.ForEach(SetAssetBundle);
-            ModPlatform.Windows.GetBuildTargets().ForEach(target =>
-            {
+            assetPaths.ForEach(s => SetAssetBundle(s));
+            scenePaths.ForEach(s => SetAssetBundle(s, "scenes"));
+            ModPlatform.Windows.GetBuildTargets().ForEach(target => {
                 var platform = target.GetModPlatform().ToString();
                 var subDir = Path.Combine(tempModDirectory, platform);
                 Directory.CreateDirectory(subDir);
