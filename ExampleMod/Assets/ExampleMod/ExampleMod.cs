@@ -5,8 +5,7 @@ using UnityEngine.UI;
 public class ExampleMod : ModBehaviour
 {
     public GameObject prefab;
-    public ContentHandler Content { get; set; }
-    void Start()
+    public override void OnLoaded(ContentHandler contentHandler)
     {
         Debug.Log("Hello World!!???");
 
@@ -30,7 +29,7 @@ public class ExampleMod : ModBehaviour
             Debug.Log("Found main canvas.");
         }
 
-        var gobj = GameObject.Instantiate(prefab);
+        var gobj = Instantiate(prefab);
         gobj.transform.SetParent(canvas.transform, false);
         var tobj = gobj.transform.Find("Text");
         var text = tobj.GetComponent<Text>();
