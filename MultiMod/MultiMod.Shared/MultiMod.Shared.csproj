@@ -52,6 +52,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ExportSettings.cs" />
     <Compile Include="LogLevel.cs" />
     <Compile Include="LogUtility.cs" />
     <Compile Include="EnumExtensions.cs" />

@@ -13,13 +13,13 @@ namespace MultiMod.Interface
         /// <summary>
         ///     This Mod's ContentHandler, which provides the Mod's prefabs, scenes and Instantiate and AddComponent methods.
         /// </summary>
-        protected ContentHandler contentHandler { get; private set; }
+        public ContentHandler contentHandler { get; set; }
 
         /// <summary>
         ///     Called when the Mod is loaded.
         /// </summary>
         /// <param name="contentHandler">The Mod's ContentHandler</param>
-        public void OnLoaded(ContentHandler contentHandler)
+        public virtual void OnLoaded(ContentHandler contentHandler)
         {
             this.contentHandler = contentHandler;
         }

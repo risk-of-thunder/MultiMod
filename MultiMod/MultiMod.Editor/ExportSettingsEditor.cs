@@ -12,6 +12,7 @@ namespace MultiMod.Editor
         private SerializedProperty _name;
         private SerializedProperty _outputDirectory;
         private SerializedProperty _version;
+        private SerializedProperty _prefab;
 
         private void OnEnable()
         {
@@ -20,6 +21,7 @@ namespace MultiMod.Editor
             _description = serializedObject.FindProperty("_description");
             _version = serializedObject.FindProperty("_version");
             _outputDirectory = serializedObject.FindProperty("_outputDirectory");
+            _prefab = serializedObject.FindProperty("_prefab");
         }
 
         public override void OnInspectorGUI()
@@ -33,6 +35,7 @@ namespace MultiMod.Editor
             EditorGUILayout.PropertyField(_name, new GUIContent("Mod Name*:"));
             EditorGUILayout.PropertyField(_author, new GUIContent("Author:"));
             EditorGUILayout.PropertyField(_version, new GUIContent("Version:"));
+            EditorGUILayout.PropertyField(_prefab, new GUIContent("Startup Prefab:"));
 
             EditorGUILayout.PropertyField(_description, new GUIContent("Description:"), GUILayout.Height(60));
 

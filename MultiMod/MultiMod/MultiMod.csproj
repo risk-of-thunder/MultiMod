@@ -62,8 +62,8 @@
     <Compile Include="AssetBundleResource.cs" />
     <Compile Include="BepinPlugin.cs" />
     <Compile Include="Dispatcher.cs" />
-    <Compile Include="Resource.cs" />
     <Compile Include="ModManager.cs" />
+    <Compile Include="Resource.cs" />
     <Compile Include="ModSearchDirectory.cs" />
     <Compile Include="Mod.cs" />
     <Compile Include="ModScene.cs" />

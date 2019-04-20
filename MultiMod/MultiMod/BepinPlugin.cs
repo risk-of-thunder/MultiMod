@@ -3,6 +3,10 @@ using On.RoR2;
 using UnityEngine;
 using Path = System.IO.Path;
 
+using MultiMod.Shared;
+using MultiMod.Interface;
+using System.Linq;
+
 namespace MultiMod
 {
     //This is an example plugin that can be put in BepInEx/plugins/MultiModPlugin/MultiModPlugin.dll to test out.
@@ -57,21 +61,21 @@ namespace MultiMod
 
             mm.ModLoaded += mod =>
             {
-                Debug.Log($"{mod.name} loaded. Looking for main prefab.");
-                foreach (var prefab in mod.contentHandler.prefabs)
-                    if (prefab.name == mod.name)
-                    {
-                        Debug.Log($"Main {mod.name} prefab found. Instantiating.");
-                        var gobj = Instantiate(prefab);
-                        var component = gobj.GetComponent(mod.name);
-                        var component_type = component.GetType();
-                        var property = component_type.GetProperty("Content");
-                        property.SetValue(component, mod.contentHandler, null);
-                    }
-                    else
-                    {
-                        Debug.Log($"{mod.name} != {prefab.name}");
-                    }
+                Debug.Log($"{mod.name} loaded. Looking for ExportSettings.");
+                var settings = mod.GetAsset<ExportSettings>("ExportSettings");
+
+                if (settings == null)
+                {
+                    Debug.LogError("Couldn't find ExportSettings in mod assetbundle.");
+                    return;
+                }
+                               
+                var gobj = Instantiate(settings.prefab);
+                Object.DontDestroyOnLoad(gobj);
+                gobj.GetComponents<ModBehaviour>().ToList().ForEach(i => {
+                    i.contentHandler = mod.contentHandler;
+                    i.OnLoaded(mod.contentHandler);
+                });
             };
 
             mm.ModLoadCancelled += mod => { Debug.LogWarning($"Mod loading canceled: {mod.name}"); };

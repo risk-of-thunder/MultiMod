@@ -1,11 +1,11 @@
 ﻿using UnityEngine;
 
-namespace MultiMod.Editor
+namespace MultiMod.Shared
 {
     /// <summary>
     ///     Stores the exporter's settings.
     /// </summary>
-    public class ExportSettings : EditorScriptableSingleton<ExportSettings>
+    public class ExportSettings : ScriptableObject
     {
         [SerializeField] private string _author;
 
@@ -16,6 +16,8 @@ namespace MultiMod.Editor
         [SerializeField] private string _outputDirectory;
 
         [SerializeField] private string _version;
+
+        [SerializeField] private GameObject _prefab;
 
         /// <summary>
         ///     The Mod's name.
@@ -41,5 +43,7 @@ namespace MultiMod.Editor
         ///     The directory to which the Mod will be exported.
         /// </summary>
         public string outputDirectory => _outputDirectory;
+
+        public GameObject prefab => _prefab;
     }
 }

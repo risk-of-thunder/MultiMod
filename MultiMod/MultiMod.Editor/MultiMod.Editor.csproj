@@ -77,10 +77,9 @@
     <Compile Include="AsmDef.cs" />
     <Compile Include="AssetUtility.cs" />
     <Compile Include="EditorModPlatformExtensions.cs" />
-    <Compile Include="Export.cs" />
     <Compile Include="EditorScriptableSingleton.cs" />
+    <Compile Include="Export.cs" />
     <Compile Include="ExporterEditorWindow.cs" />
-    <Compile Include="ExportSettings.cs" />
     <Compile Include="ExportSettingsEditor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -1,11 +1,13 @@
 ﻿using UnityEditor;
 using UnityEngine;
 
+using MultiMod.Shared;
+
 namespace MultiMod.Editor
 {
     internal class ExporterEditorWindow : EditorWindow
     {
-        private ExportSettings exportSettings;
+        private EditorScriptableSingleton<ExportSettings> exportSettings;
         private UnityEditor.Editor exportSettingsEditor;
 
         [MenuItem("MultiMod/Export Mod")]
@@ -19,8 +21,8 @@ namespace MultiMod.Editor
 
         private void OnEnable()
         {
-            exportSettings = ExportSettings.instance;
-            exportSettingsEditor = UnityEditor.Editor.CreateEditor(exportSettings);
+            exportSettings = new EditorScriptableSingleton<ExportSettings>();
+            exportSettingsEditor = UnityEditor.Editor.CreateEditor(exportSettings.instance);
         }
 
         private void OnDisable()
@@ -39,7 +41,7 @@ namespace MultiMod.Editor
             var buttonPressed = GUILayout.Button("Export", GUILayout.Height(30));
 
             if (buttonPressed)
-                Export.ExportMod(exportSettings);
+                Export.ExportMod(exportSettings.instance);
         }
     }
 }

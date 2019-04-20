@@ -66,7 +66,7 @@ namespace MultiMod.Editor
             {
                 var assetPath = AssetDatabase.GUIDToAssetPath(guid);
 
-                if (assetPath.Contains("MultiMod"))
+                if (assetPath.Contains("MultiMod") && !assetPath.Contains("ExportSettings"))
                     continue;
 
                 if (assetPath.StartsWith("Packages"))

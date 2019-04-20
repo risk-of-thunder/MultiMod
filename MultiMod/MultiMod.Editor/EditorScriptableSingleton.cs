@@ -2,19 +2,22 @@
 
 namespace MultiMod.Editor
 {
-    public abstract class EditorScriptableSingleton<T> : ScriptableObject where T : EditorScriptableSingleton<T>
+    public class EditorScriptableSingleton<T> where T : ScriptableObject
     {
         private static T _instance;
 
-        protected EditorScriptableSingleton()
+        public EditorScriptableSingleton(T instance = null)
         {
+            if (instance != null)
+                _instance = instance;
+
             if (_instance == null)
-                _instance = this as T;
+                _instance = GetInstance();
         }
         //Note: Unity versions 5.6 and earlier fail to load ScriptableObject assets for Types that are defined in an editor assembly 
         //and derive from a Type defined in a non-editor assembly.
 
-        public static T instance
+        public T instance
         {
             get
             {
@@ -25,13 +28,7 @@ namespace MultiMod.Editor
             }
         }
 
-        private void OnEnable()
-        {
-            if (_instance == null)
-                _instance = this as T;
-        }
-
-        private static void GetInstance()
+        private T GetInstance()
         {
             Debug.Log("Getting export settings.");
 
@@ -41,20 +38,11 @@ namespace MultiMod.Editor
 
             if (_instance == null)
             {
-                Debug.Log("Resource not found, creating...");
-                _instance = CreateInstance<T>();
-
-                if (Application.isEditor)
-                {
-                    Debug.Log("Creating asset resource.");
-                    CreateAsset();
-                }
+                Debug.Log("Creating asset resource.");
+                _instance = ScriptableObject.CreateInstance<T>();
+                AssetUtility.CreateAsset(_instance);
             }
-        }
-
-        private static void CreateAsset()
-        {
-            AssetUtility.CreateAsset(_instance);
+            return _instance;
         }
     }
 }

@@ -146,7 +146,7 @@ namespace MultiMod
         ///     mod,
         ///     or cleaned up after the mod is unloaded.
         /// </summary>
-        public ContentHandler contentHandler { get; private set; }
+        public ContentHandler contentHandler { get; set; }
 
         /// <summary>
         ///     Occurs when a ModScene has been loaded

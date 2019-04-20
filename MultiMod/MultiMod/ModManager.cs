@@ -18,6 +18,7 @@ namespace MultiMod
         private readonly object _lock = new object();
 
         private Dictionary<string, Mod> _modPaths;
+        public Dictionary<GameObject, Mod> modMap;
         private List<Mod> _mods;
         private int _refreshInterval;
 
