@@ -15,6 +15,6 @@ MonoBehaviour:
   _author: MultiMod
   _description: 
   _name: ExampleMod
-  _outputDirectory: S:/SteamLibrary/steamapps/common/Risk of Rain 2/BepInEx/plugins/multimod/mods
+  _outputDirectory: B:/RoR2/MultiMod/build/
   _version: 0.0.1
   _prefab: {fileID: 6496937122687186768, guid: 5eb8811b29cc7bf4ca0d5bd61dc1222a, type: 3}

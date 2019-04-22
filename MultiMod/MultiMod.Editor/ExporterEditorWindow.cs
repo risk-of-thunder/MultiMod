@@ -5,7 +5,7 @@ using MultiMod.Shared;
 
 namespace MultiMod.Editor
 {
-    internal class ExporterEditorWindow : EditorWindow
+    public class ExporterEditorWindow : EditorWindow
     {
         private EditorScriptableSingleton<ExportSettings> exportSettings;
         private UnityEditor.Editor exportSettingsEditor;
@@ -42,6 +42,12 @@ namespace MultiMod.Editor
 
             if (buttonPressed)
                 Export.ExportMod(exportSettings.instance);
+        }
+
+        public static void ExportMod()
+        {
+            var singleton = new EditorScriptableSingleton<ExportSettings>();
+            Export.ExportMod(singleton.instance);
         }
     }
 }
