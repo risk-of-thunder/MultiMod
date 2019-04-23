@@ -1,6 +1,5 @@
 ﻿using MultiMod.Interface;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class ExampleMod : ModBehaviour
 {
@@ -9,31 +8,21 @@ public class ExampleMod : ModBehaviour
     {
         Debug.Log("Hello World!!???");
 
-
+        // unlock all the things
         On.RoR2.UserProfile.HasSurvivorUnlocked += (o, s, i) => true;
-
         On.RoR2.UserProfile.HasDiscoveredPickup += (o, s, i) => true;
-
         On.RoR2.UserProfile.HasAchievement += (o, s, i) => true;
-
         On.RoR2.UserProfile.CanSeeAchievement += (o, s, i) => true;
-
         On.RoR2.UserProfile.HasUnlockable_UnlockableDef += (o, s, i) => true;
 
+        // get reference to game's main canvas
         var canvas = RoR2.RoR2Application.instance.mainCanvas;
-        if (canvas == null)
-        {
-            Debug.Log("Couldn't find `MainCanvas` in scene.");
-        } else
-        {
-            Debug.Log("Found main canvas.");
-        }
 
+        // instantiate UI prefab
         var gobj = Instantiate(prefab);
         gobj.transform.SetParent(canvas.transform, false);
-        var tobj = gobj.transform.Find("Text");
-        var text = tobj.GetComponent<Text>();
-        text.text = $"IsModded={RoR2.RoR2Application.isModded}";
+
+        // set the parent to game's canvas and fix the sizings
         var rect = gobj.GetComponent<RectTransform>();
         rect.offsetMin = rect.offsetMax = Vector2.zero;
         rect.anchorMin = new Vector2(0.00f, 0.00f);
