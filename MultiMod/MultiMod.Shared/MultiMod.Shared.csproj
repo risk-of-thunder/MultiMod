@@ -66,9 +66,6 @@
     <Compile Include="StringExtensions.cs" />
     <Compile Include="TypeName.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>echo f | xcopy /s /i /Y "$(TargetDir)$(TargetName).dll" "$(SolutionDir)ExampleMod\Assets\MultiMod\$(TargetName).dll"

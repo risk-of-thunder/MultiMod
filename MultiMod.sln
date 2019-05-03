@@ -19,6 +19,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MultiMod.Cecil", "MultiMod\
 		{5E13231B-CA13-4496-B32C-BB033B15A379} = {5E13231B-CA13-4496-B32C-BB033B15A379}
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MultiMod.Plugin", "MultiMod\MultiMod.Plugin\MultiMod.Plugin.csproj", "{764626B2-4780-4DFC-B144-553FB18F5A97}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MultiMod.Patcher", "MultiMod\MultiMod.Patcher\MultiMod.Patcher.csproj", "{1BA6FF9F-E574-4425-96AD-2045604E216D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +49,14 @@ Global
 		{C07BE8A5-F75A-4A95-8ED1-450162264EAF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C07BE8A5-F75A-4A95-8ED1-450162264EAF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C07BE8A5-F75A-4A95-8ED1-450162264EAF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{764626B2-4780-4DFC-B144-553FB18F5A97}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{764626B2-4780-4DFC-B144-553FB18F5A97}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{764626B2-4780-4DFC-B144-553FB18F5A97}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{764626B2-4780-4DFC-B144-553FB18F5A97}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1BA6FF9F-E574-4425-96AD-2045604E216D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1BA6FF9F-E574-4425-96AD-2045604E216D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1BA6FF9F-E574-4425-96AD-2045604E216D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1BA6FF9F-E574-4425-96AD-2045604E216D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

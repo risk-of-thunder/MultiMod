@@ -1,13 +1,12 @@
 ﻿using BepInEx;
+using MultiMod.Interface;
+using MultiMod.Shared;
 using On.RoR2;
+using System.Linq;
 using UnityEngine;
 using Path = System.IO.Path;
 
-using MultiMod.Shared;
-using MultiMod.Interface;
-using System.Linq;
-
-namespace MultiMod
+namespace MultiMod.Plugin
 {
     //This is an example plugin that can be put in BepInEx/plugins/MultiModPlugin/MultiModPlugin.dll to test out.
     //Lets examine what each line of code is for:
