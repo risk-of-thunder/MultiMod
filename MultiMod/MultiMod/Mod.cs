@@ -42,6 +42,7 @@ namespace MultiMod
             modInfo = ModInfo.Load(path);
 
             contentType = modInfo.content;
+            contentTypes = modInfo.contentTypes;
 
             var modDirectory = Path.GetDirectoryName(path);
             var platformDirectory = Path.Combine(modDirectory, Application.platform.GetModPlatform().ToString());
@@ -101,6 +102,8 @@ namespace MultiMod
         ///     Types of content included in this Mod.
         /// </summary>
         public ModContent contentType { get; }
+
+        public ContentType contentTypes { get; }
 
         /// <summary>
         ///     Is this Mod or any of its resources currently busy loading?
@@ -211,19 +214,19 @@ namespace MultiMod
                 return;
             }
 
-            if ((contentType & ModContent.Assets) == ModContent.Assets && !assetsResource.canLoad)
+            if (contentTypes.HasFlag(ContentType.prefabs) && !assetsResource.canLoad)
             {
                 isValid = false;
                 Debug.Log("Assets assetbundle missing for Mod: " + name);
             }
 
-            if ((contentType & ModContent.Scenes) == ModContent.Scenes && !scenesResource.canLoad)
+            if (contentTypes.HasFlag(ContentType.scenes) && !scenesResource.canLoad)
             {
                 isValid = false;
                 Debug.Log("Scenes assetbundle missing for Mod: " + name);
             }
 
-            if ((contentType & ModContent.Code) == ModContent.Code && assemblyFiles.Count == 0)
+            if (contentTypes.HasFlag(ContentType.assemblies) && assemblyFiles.Count == 0)
             {
                 isValid = false;
                 Debug.Log("Assemblies missing for Mod: " + name);

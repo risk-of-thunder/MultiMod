@@ -70,7 +70,7 @@ namespace MultiMod
                     return;
                 }
                                
-                var gobj = Instantiate(settings.prefab);
+                var gobj = Instantiate(settings.StartupPrefab);
                 Object.DontDestroyOnLoad(gobj);
                 gobj.GetComponents<ModBehaviour>().ToList().ForEach(i => {
                     i.contentHandler = mod.contentHandler;

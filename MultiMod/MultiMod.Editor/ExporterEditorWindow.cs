@@ -2,27 +2,44 @@
 using UnityEngine;
 
 using MultiMod.Shared;
+using System.Linq;
+using System.IO;
+using System.Collections.Generic;
+using System;
 
 namespace MultiMod.Editor
 {
     public class ExporterEditorWindow : EditorWindow
     {
         private EditorScriptableSingleton<ExportSettings> exportSettings;
-        private UnityEditor.Editor exportSettingsEditor;
+        private ExportSettingsEditor exportSettingsEditor;
+
+        private int selectedTab = 0;
+        private int selectedPath = 0;
+        private List<string> addedAsmdefs = new List<string>();
+
+        ExportEditor exportEditor;
+        AssemblyEditor assemblyEditor;
+        ArtifactEditor artifactEditor;
+
 
         [MenuItem("MultiMod/Export Mod")]
         public static void ShowWindow()
         {
             var window = GetWindow<ExporterEditorWindow>();
-            window.maxSize = new Vector2(385f, 265);
-            window.minSize = new Vector2(300f, 265);
             window.titleContent = new GUIContent("MultiMod Exporter");
+            window.minSize = new Vector2(450, 320);
+            ExtraAssetsWindow.ShowWindow();
+            window.Focus();
         }
 
         private void OnEnable()
         {
             exportSettings = new EditorScriptableSingleton<ExportSettings>();
-            exportSettingsEditor = UnityEditor.Editor.CreateEditor(exportSettings.instance);
+            exportSettingsEditor = UnityEditor.Editor.CreateEditor(exportSettings.instance) as ExportSettingsEditor;
+            assemblyEditor = new AssemblyEditor();
+            artifactEditor = new ArtifactEditor();
+            exportEditor = new ExportEditor();
         }
 
         private void OnDisable()
@@ -30,18 +47,41 @@ namespace MultiMod.Editor
             DestroyImmediate(exportSettingsEditor);
         }
 
+        private void DrawExportEditor(ExportSettings settings)
+        {
+            if (exportEditor.Draw(settings))
+            {
+                var buttonPressed = GUILayout.Button("Export", GUILayout.Height(30));
+
+                GUILayout.FlexibleSpace();
+
+                if (buttonPressed)
+                    Export.ExportMod(settings);
+            }
+        }
+
         private void OnGUI()
         {
             GUI.enabled = !EditorApplication.isCompiling && !Application.isPlaying;
 
-            exportSettingsEditor.OnInspectorGUI();
+            var settings = exportSettings.instance;
 
-            GUILayout.FlexibleSpace();
+            var tabs = new string[] { "Export", "Assemblies", "Copy Artifacts" };
 
-            var buttonPressed = GUILayout.Button("Export", GUILayout.Height(30));
+            selectedTab = GUILayout.Toolbar(selectedTab, tabs);
 
-            if (buttonPressed)
-                Export.ExportMod(exportSettings.instance);
+            switch (tabs[selectedTab])
+            {
+                case "Export":
+                    DrawExportEditor(settings);
+                    break;
+                case "Assemblies":
+                    settings.Assemblies = assemblyEditor.Draw(settings);
+                    break;
+                case "Copy Artifacts":
+                    settings.Artifacts = artifactEditor.Draw(settings);
+                    break;
+            }
         }
 
         public static void ExportMod()

@@ -10,6 +10,7 @@ namespace MultiMod.Editor
     public class Export
     {
         private readonly List<string> asmDefPaths;
+        private readonly List<string> copyPaths;
         private readonly List<string> assetPaths;
         private readonly List<string> scenePaths;
         private readonly string modDirectory;
@@ -20,18 +21,17 @@ namespace MultiMod.Editor
         public Export(ExportSettings settings)
         {
             this.settings = settings;
-            prefix = $"{settings.name}-{settings.version}";
-            asmDefPaths = AssetUtility.GetAssets("t:AssemblyDefinitionAsset");
+            prefix = $"{settings.Name}-{settings.Version}";
             assetPaths = AssetUtility.GetAssets("t:prefab t:scriptableobject");
             scenePaths = AssetUtility.GetAssets("t:scene");
-            tempModDirectory = Path.Combine("Temp", settings.name);
-            modDirectory = Path.Combine(settings.outputDirectory, settings.name);
+            tempModDirectory = Path.Combine("Temp", settings.Name);
+            modDirectory = Path.Combine(settings.OutputDirectory, settings.Name);
         }
 
         public void SetAssetBundle(string assetPath, string variant = "assets")
         {
             var importer = AssetImporter.GetAtPath(assetPath);
-            importer.assetBundleName = settings.name;
+            importer.assetBundleName = settings.Name;
             importer.assetBundleVariant = variant;
         }
 
@@ -63,7 +63,7 @@ namespace MultiMod.Editor
         private void ExportModAssemblies()
         {
             LogUtility.LogDebug("Exporting mod assemblies...");
-            foreach (var asmDefPath in asmDefPaths)
+            foreach (var asmDefPath in settings.Assemblies)
             {
                 var json = File.ReadAllText(asmDefPath);
                 var asmDef = JsonUtility.FromJson<AsmDef>(json);
@@ -78,6 +78,17 @@ namespace MultiMod.Editor
 
                 LogUtility.LogDebug($" - {asmDef.name}");
                 File.Copy(modAsmPath, Path.Combine(tempModDirectory, $"{asmDef.name}.dll"));
+            }
+        }
+
+        private void ExportCopyAssets()
+        {
+            LogUtility.LogDebug("Exporting copy assets...");
+            foreach (var path in settings.Artifacts)
+            {
+                var filename = Path.GetFileName(path);
+                var destination = Path.Combine(tempModDirectory, filename);
+                File.Copy(path, destination);
             }
         }
 
@@ -97,15 +108,16 @@ namespace MultiMod.Editor
         private void SaveMetadata()
         {
             var modInfo = new ModInfo(
-                settings.name,
-                settings.author,
-                settings.description,
-                settings.version,
+                settings.Name,
+                settings.Author,
+                settings.Description,
+                settings.Version,
                 Application.unityVersion,
                 ModPlatform.Windows,
-                ModContent.Assets & ModContent.Scenes);
+                ModContent.Assets & ModContent.Scenes,
+                settings.ContentTypes);
 
-            ModInfo.Save(Path.Combine(tempModDirectory, settings.name + ".info"), modInfo);
+            ModInfo.Save(Path.Combine(tempModDirectory, settings.Name + ".info"), modInfo);
         }
 
         private void CopyToOutput()
@@ -128,9 +140,10 @@ namespace MultiMod.Editor
 
         public void Run()
         {
-            LogUtility.LogDebug($"Starting export of {settings.name}");
+            LogUtility.LogDebug($"Starting export of {settings.Name}");
             CreateTempDirectory();
             ExportModAssemblies();
+            ExportCopyAssets();
             ExportModAssets();
             SaveMetadata();
             CopyToOutput();

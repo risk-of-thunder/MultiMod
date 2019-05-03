@@ -76,6 +76,11 @@
   <ItemGroup>
     <Compile Include="AsmDef.cs" />
     <Compile Include="AssetUtility.cs" />
+    <Compile Include="AssemblyEditor.cs" />
+    <Compile Include="ArtifactEditor.cs" />
+    <Compile Include="SelectionEditor.cs" />
+    <Compile Include="ExportEditor.cs" />
+    <Compile Include="ExtraAssetsWindow.cs" />
     <Compile Include="EditorModPlatformExtensions.cs" />
     <Compile Include="EditorScriptableSingleton.cs" />
     <Compile Include="Export.cs" />

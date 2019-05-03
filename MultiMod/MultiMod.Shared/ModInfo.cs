@@ -38,6 +38,15 @@ namespace MultiMod.Shared
         }
 
         /// <summary>
+        /// The Mod's available content types.
+        /// </summary>
+        public ContentType contentTypes {
+            get {
+                return _contentTypes;
+            }
+        }
+
+        /// <summary>
         /// Mod author.
         /// </summary>
         public string author {
@@ -112,6 +121,9 @@ namespace MultiMod.Shared
         private ModContent _content;
 
         [SerializeField]
+        private ContentType _contentTypes;
+
+        [SerializeField]
         private bool _isEnabled;
 
         /// <summary>
@@ -131,13 +143,15 @@ namespace MultiMod.Shared
             string version,
             string unityVersion,
             ModPlatform platforms,
-            ModContent content)
+            ModContent content,
+            ContentType contentTypes)
         {
             _author = author;
             _description = description;
             _name = name;
             _platforms = platforms;
             _content = content;
+            _contentTypes = contentTypes;
             _version = version;
             _unityVersion = unityVersion;
 

@@ -27,21 +27,7 @@ The ExampleMod is a great example of this simplicity. Check it out.
 ## Table of Contents
 
 - [Installation](https://github.com/risk-of-thunder/MultiMod#installation)
-  - [Installing the Bepin Plugin](https://github.com/risk-of-thunder/MultiMod#installing-the-bepin-plugin)
-  - [Installing the Exporter](https://github.com/risk-of-thunder/MultiMod#installing-the-exporter)
-  - [Building from source](https://github.com/risk-of-thunder/MultiMod#building-from-source)
-- [Assetmods](https://github.com/risk-of-thunder/MultiMod#assetmods)
-  - [Setting up a new Unity Project](https://github.com/risk-of-thunder/MultiMod#setting-up-a-new-unity-project)
-  - [The Export Window](https://github.com/risk-of-thunder/MultiMod#the-export-window)
-  - [The Startp Prefab](https://github.com/risk-of-thunder/MultiMod#the-startup-prefab)
-  - [ContentHandler and ModBehaviour](https://github.com/risk-of-thunder/MultiMod#contenthandler-and-mod-behaviour)
-    - [OnLoaded](https://github.com/risk-of-thunder/MultiMod#onloaded)
-    - [Scenes and Prefabs](https://github.com/risk-of-thunder/MultiMod#scenes-and-prefabs)
-  - [Assetmod Assemblies](https://github.com/risk-of-thunder/MultiMod#assetmod-assemblies)
-    - [Assembly Definition Assets](https://github.com/risk-of-thunder/MultiMod#assembly-definition-assets)
-      - [Asmdef Settings](https://github.com/risk-of-thunder/MultiMod#asmdef-settings)
-  - [Exported Assetmod Content](https://github.com/risk-of-thunder/MultiMod#exported-assetmod-content)
-  - [Installing Assetmods](https://github.com/risk-of-thunder/MultiMod#installing-assetmods)
+- 
 
 ## Installation
 
